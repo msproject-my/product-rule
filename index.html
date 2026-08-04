@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="ms">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Simulator Petua Hasil Darab</title>
+  <title>Product Rule Simulator</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- KaTeX CSS & JS untuk Paparan Formula Matematik -->
+  <!-- KaTeX CSS & JS for Math Formula Rendering -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
   <!-- Google Fonts -->
@@ -22,7 +22,7 @@
     .font-handwriting {
       font-family: 'Fredoka', cursive;
     }
-    /* Latar Belakang Kertas Graf / Notebook Aesthetic */
+    /* Aesthetic Notebook Grid Background */
     .bg-notebook {
       background-color: #fdfbf7;
       background-image: 
@@ -30,13 +30,13 @@
         linear-gradient(to bottom, rgba(180, 195, 225, 0.22) 1px, transparent 1px);
       background-size: 24px 24px;
     }
-    /* Kotak Sempadan Putus-putus Merah */
+    /* Red Dashed Accent Box */
     .slide-box-dashed {
       border: 2.5px dashed #f43f5e;
       background-color: rgba(254, 242, 242, 0.65);
       border-radius: 12px;
     }
-    /* Scrollbar Kustom */
+    /* Custom Scrollbar */
     ::-webkit-scrollbar {
       width: 8px;
       height: 8px;
@@ -52,7 +52,7 @@
     ::-webkit-scrollbar-thumb:hover {
       background: #94a3b8;
     }
-    /* Animasi Pergerakan Garis Anak Panah Silang */
+    /* Cross Arrow Animation */
     .cross-arrow-line {
       stroke-dasharray: 6;
       animation: dash 20s linear infinite;
@@ -66,11 +66,11 @@
 </head>
 <body class="min-h-screen text-slate-800 bg-notebook flex flex-col justify-between selection:bg-pink-200">
 
-  <!-- BAR NAVIGASI ATAS -->
+  <!-- TOP NAVIGATION BAR -->
   <header class="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-purple-100 shadow-sm">
     <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
       
-      <!-- Logo & Tajuk Utama -->
+      <!-- Logo & Main Title -->
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-400 to-pink-400 flex items-center justify-center text-white shadow-md font-bold text-xl font-handwriting">
           dy
@@ -80,157 +80,157 @@
             Rules of Differentiation.
           </h1>
           <p class="text-xs text-indigo-500 font-semibold uppercase tracking-wider">
-            Simulator Petua Hasil Darab Interaktif
+            Interactive Product Rule Simulator
           </p>
         </div>
       </div>
 
-      <!-- Navigasi Utama -->
+      <!-- Main Navigation -->
       <div class="flex items-center gap-2 md:gap-3">
-        <!-- Butang Home -->
-        <button id="btnHome" onclick="resetToHome()" class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 font-semibold text-sm transition-all duration-200 shadow-sm hover:scale-105 active:scale-95 border border-purple-200/60" title="Kembali ke Laman Utama">
+        <!-- Home Button -->
+        <button id="btnHome" onclick="resetToHome()" class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 font-semibold text-sm transition-all duration-200 shadow-sm hover:scale-105 active:scale-95 border border-purple-200/60" title="Return to Home">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-          <span class="hidden sm:inline">Laman Utama</span>
+          <span class="hidden sm:inline">Home</span>
         </button>
 
-        <!-- Butang Panduan Pengguna -->
-        <button onclick="toggleManualModal(true)" class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-pink-50 hover:bg-pink-100 text-pink-700 font-semibold text-sm transition-all duration-200 shadow-sm hover:scale-105 active:scale-95 border border-pink-200/60" title="Panduan Manual Penggunaan">
+        <!-- User Guide Button -->
+        <button onclick="toggleManualModal(true)" class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-pink-50 hover:bg-pink-100 text-pink-700 font-semibold text-sm transition-all duration-200 shadow-sm hover:scale-105 active:scale-95 border border-pink-200/60" title="User Manual & Guide">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-          <span class="hidden sm:inline">Panduan Pengguna</span>
+          <span class="hidden sm:inline">User Guide</span>
         </button>
       </div>
 
     </div>
   </header>
 
-  <!-- KAWASAN KANDUNGAN UTAMA -->
+  <!-- MAIN CONTENT AREA -->
   <main class="max-w-6xl mx-auto px-4 py-6 w-full flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-    <!-- LAJUR KIRI: PANEL INPUT & PEMBINA SOALAN (4 Cols) -->
+    <!-- LEFT COLUMN: INPUT PANEL & QUESTION BUILDER (4 Cols) -->
     <section class="lg:col-span-4 flex flex-col gap-5">
       
-      <!-- KAD INPUT -->
+      <!-- INPUT CARD -->
       <div class="bg-white rounded-2xl p-5 shadow-sm border border-indigo-100 flex-1 flex flex-col justify-between">
         <div>
           
-          <!-- SEKSYEN 1: PILIH BENTUK SOALAN TERLEBIH DAHULU -->
+          <!-- SECTION 1: SELECT QUESTION STRUCTURE FIRST -->
           <div class="mb-5 pb-3 border-b border-dashed border-slate-200">
             <div class="flex items-center justify-between mb-2">
               <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
                 <span class="w-3 h-3 rounded-full bg-purple-500 inline-block"></span>
-                1. Pilih Bentuk Soalan
+                1. Select Question Structure
               </h2>
-              <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-purple-100 text-purple-800">Langkah 1</span>
+              <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-purple-100 text-purple-800">Step 1</span>
             </div>
-            <p class="text-xs text-slate-500 mb-3">Pilih bentuk struktur soalan yang mahu diselesaikan:</p>
+            <p class="text-xs text-slate-500 mb-3">Choose the structure of the question you want to solve:</p>
             
             <div class="grid grid-cols-1 gap-2" id="template-buttons-container">
-              <!-- Templat 1 -->
+              <!-- Template 1 -->
               <button onclick="selectTemplate('mono_bi')" id="tmpl-mono_bi" class="p-2.5 rounded-xl text-left border transition-all flex items-center justify-between bg-purple-50/80 border-purple-300 text-purple-900 shadow-sm">
                 <div>
                   <div class="text-xs font-bold">Monomial × Binomial</div>
                   <div class="text-xs text-slate-600 font-semibold py-0.5" id="tmpl-text-1"></div>
                 </div>
-                <span id="badge-mono_bi" class="text-xs font-bold px-2 py-0.5 rounded-md bg-purple-200 text-purple-800">Dipilih</span>
+                <span id="badge-mono_bi" class="text-xs font-bold px-2 py-0.5 rounded-md bg-purple-200 text-purple-800">Selected</span>
               </button>
 
-              <!-- Templat 2 -->
+              <!-- Template 2 -->
               <button onclick="selectTemplate('bi_bi')" id="tmpl-bi_bi" class="p-2.5 rounded-xl text-left border transition-all flex items-center justify-between bg-white border-slate-200 hover:border-purple-200 text-slate-700">
                 <div>
                   <div class="text-xs font-bold">Binomial × Binomial</div>
                   <div class="text-xs text-slate-600 font-semibold py-0.5" id="tmpl-text-2"></div>
                 </div>
-                <span id="badge-bi_bi" class="hidden text-xs font-bold px-2 py-0.5 rounded-md bg-purple-200 text-purple-800">Dipilih</span>
+                <span id="badge-bi_bi" class="hidden text-xs font-bold px-2 py-0.5 rounded-md bg-purple-200 text-purple-800">Selected</span>
               </button>
 
-              <!-- Templat 3 -->
+              <!-- Template 3 -->
               <button onclick="selectTemplate('quad_lin')" id="tmpl-quad_lin" class="p-2.5 rounded-xl text-left border transition-all flex items-center justify-between bg-white border-slate-200 hover:border-purple-200 text-slate-700">
                 <div>
-                  <div class="text-xs font-bold">Kuadratik / Polinomial × Linier</div>
+                  <div class="text-xs font-bold">Quadratic / Polynomial × Linear</div>
                   <div class="text-xs text-slate-600 font-semibold py-0.5" id="tmpl-text-3"></div>
                 </div>
-                <span id="badge-quad_lin" class="hidden text-xs font-bold px-2 py-0.5 rounded-md bg-purple-200 text-purple-800">Dipilih</span>
+                <span id="badge-quad_lin" class="hidden text-xs font-bold px-2 py-0.5 rounded-md bg-purple-200 text-purple-800">Selected</span>
               </button>
             </div>
           </div>
 
-          <!-- SEKSYEN 2: TUKAR NILAI SAHAJA -->
+          <!-- SECTION 2: CUSTOMIZE VALUES ONLY -->
           <div class="mb-4">
             <div class="flex items-center justify-between mb-2">
               <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
                 <span class="w-3 h-3 rounded-full bg-pink-400 inline-block"></span>
-                2. Tukar Nilai Sahaja
+                2. Customize Values Only
               </h2>
-              <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-pink-100 text-pink-800">Langkah 2</span>
+              <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-pink-100 text-pink-800">Step 2</span>
             </div>
-            <p class="text-xs text-slate-500 mb-3">Suaikan nilai ungkapan u(x) dan v(x) mengikut soalan anda:</p>
+            <p class="text-xs text-slate-500 mb-3">Adjust expressions u(x) and v(x) according to your problem:</p>
 
-            <!-- BORANG INPUT U(X) -->
+            <!-- FORM INPUT U(X) -->
             <div class="p-3.5 rounded-xl bg-pink-50/70 border border-pink-200 mb-3 shadow-sm">
               <div class="flex items-center justify-between mb-1.5">
-                <span class="text-xs font-bold text-pink-700 uppercase tracking-wider">Fungsi Depan u(x)</span>
-                <span class="text-[11px] text-pink-500 font-medium">u = (Asas)<sup>Kuasa</sup></span>
+                <span class="text-xs font-bold text-pink-700 uppercase tracking-wider">Front Function u(x)</span>
+                <span class="text-[11px] text-pink-500 font-medium">u = (Base)<sup>Power</sup></span>
               </div>
               <div class="grid grid-cols-12 gap-2 items-center">
                 <div class="col-span-8">
-                  <label class="text-[10px] text-slate-500 font-medium block mb-0.5">Ungkapan Asas u</label>
+                  <label class="text-[10px] text-slate-500 font-medium block mb-0.5">Base Expression u</label>
                   <input type="text" id="u_base" value="x" class="w-full px-3 py-1.5 text-sm rounded-lg border border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-400 bg-white font-medium">
                 </div>
                 <div class="col-span-4">
-                  <label class="text-[10px] text-slate-500 font-medium block mb-0.5">Kuasa (m)</label>
+                  <label class="text-[10px] text-slate-500 font-medium block mb-0.5">Power (m)</label>
                   <input type="number" id="u_pow" value="5" min="1" max="15" class="w-full px-3 py-1.5 text-sm rounded-lg border border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-400 bg-white text-center font-bold">
                 </div>
               </div>
             </div>
 
-            <!-- BORANG INPUT V(X) -->
+            <!-- FORM INPUT V(X) -->
             <div class="p-3.5 rounded-xl bg-indigo-50/70 border border-indigo-200 mb-3 shadow-sm">
               <div class="flex items-center justify-between mb-1.5">
-                <span class="text-xs font-bold text-indigo-700 uppercase tracking-wider">Fungsi Belakang v(x)</span>
-                <span class="text-[11px] text-indigo-500 font-medium">v = (Asas)<sup>Kuasa</sup></span>
+                <span class="text-xs font-bold text-indigo-700 uppercase tracking-wider">Back Function v(x)</span>
+                <span class="text-[11px] text-indigo-500 font-medium">v = (Base)<sup>Power</sup></span>
               </div>
               <div class="grid grid-cols-12 gap-2 items-center">
                 <div class="col-span-8">
-                  <label class="text-[10px] text-slate-500 font-medium block mb-0.5">Ungkapan Asas v</label>
+                  <label class="text-[10px] text-slate-500 font-medium block mb-0.5">Base Expression v</label>
                   <input type="text" id="v_base" value="2x + 8" class="w-full px-3 py-1.5 text-sm rounded-lg border border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white font-medium">
                 </div>
                 <div class="col-span-4">
-                  <label class="text-[10px] text-slate-500 font-medium block mb-0.5">Kuasa (n)</label>
+                  <label class="text-[10px] text-slate-500 font-medium block mb-0.5">Power (n)</label>
                   <input type="number" id="v_pow" value="6" min="1" max="15" class="w-full px-3 py-1.5 text-sm rounded-lg border border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white text-center font-bold">
                 </div>
               </div>
             </div>
 
-            <!-- BAR SIMBOL KUASA PANTAS -->
+            <!-- QUICK POWER TOOLBAR -->
             <div class="p-2 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between gap-1 mb-3">
               <span class="text-[11px] font-bold text-slate-600 flex items-center gap-1">
-                <span>⚡</span> Tekan Masukkan Kuasa:
+                <span>⚡</span> Click to Insert Power:
               </span>
               <div class="flex items-center gap-1">
-                <button type="button" onclick="insertSymbol('²')" class="px-2.5 py-1 bg-purple-100 hover:bg-purple-200 text-purple-800 rounded-lg text-xs font-bold border border-purple-200 shadow-sm transition-all active:scale-95" title="Tambah Kuasa 2">x²</button>
-                <button type="button" onclick="insertSymbol('³')" class="px-2.5 py-1 bg-purple-100 hover:bg-purple-200 text-purple-800 rounded-lg text-xs font-bold border border-purple-200 shadow-sm transition-all active:scale-95" title="Tambah Kuasa 3">x³</button>
-                <button type="button" onclick="insertSymbol('⁴')" class="px-2.5 py-1 bg-purple-100 hover:bg-purple-200 text-purple-800 rounded-lg text-xs font-bold border border-purple-200 shadow-sm transition-all active:scale-95" title="Tambah Kuasa 4">x⁴</button>
+                <button type="button" onclick="insertSymbol('²')" class="px-2.5 py-1 bg-purple-100 hover:bg-purple-200 text-purple-800 rounded-lg text-xs font-bold border border-purple-200 shadow-sm transition-all active:scale-95" title="Add Power of 2">x²</button>
+                <button type="button" onclick="insertSymbol('³')" class="px-2.5 py-1 bg-purple-100 hover:bg-purple-200 text-purple-800 rounded-lg text-xs font-bold border border-purple-200 shadow-sm transition-all active:scale-95" title="Add Power of 3">x³</button>
+                <button type="button" onclick="insertSymbol('⁴')" class="px-2.5 py-1 bg-purple-100 hover:bg-purple-200 text-purple-800 rounded-lg text-xs font-bold border border-purple-200 shadow-sm transition-all active:scale-95" title="Add Power of 4">x⁴</button>
                 <button type="button" onclick="insertSymbol(' + ')" class="px-2 py-1 bg-white hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold border border-slate-300 shadow-sm transition-all active:scale-95">+</button>
                 <button type="button" onclick="insertSymbol(' - ')" class="px-2 py-1 bg-white hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold border border-slate-300 shadow-sm transition-all active:scale-95">-</button>
               </div>
             </div>
           </div>
 
-          <!-- PRATONTON SOALAN SEMASA -->
+          <!-- CURRENT QUESTION PREVIEW -->
           <div class="p-3 rounded-xl bg-slate-100 text-center border border-slate-200 mb-4">
-            <span class="text-[11px] text-slate-400 font-bold block mb-1 uppercase tracking-wider">Pratonton Soalan Semasa</span>
+            <span class="text-[11px] text-slate-400 font-bold block mb-1 uppercase tracking-wider">Current Question Preview</span>
             <div id="live-question-preview" class="text-base font-semibold text-slate-800"></div>
           </div>
         </div>
 
-        <!-- BUTANG KIRA & RESET -->
+        <!-- SIMULATE & RESET BUTTONS -->
         <div class="flex gap-2">
           <button onclick="calculateProductRule()" class="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold text-sm shadow-md hover:shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 002-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
-            Simulasi & Kira Jalan Kerja
+            Simulate & Calculate Steps
           </button>
           
-          <button onclick="resetInputs()" class="p-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 transition-all border border-slate-300" title="Reset Input">
+          <button onclick="resetInputs()" class="p-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 transition-all border border-slate-300" title="Reset Inputs">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.01M20 20v-5h-.01M4 9a9 9 0 0115.357-2m1.5 8a9 9 0 01-15.357 2"/></svg>
           </button>
         </div>
@@ -239,50 +239,50 @@
 
     </section>
 
-    <!-- LAJUR KANAN: PAPARAN JALAN KERJA (8 Cols) -->
+    <!-- RIGHT COLUMN: STEP-BY-STEP SOLUTION DISPLAY (8 Cols) -->
     <section class="lg:col-span-8 flex flex-col gap-6">
       
-      <!-- KAD UTAMA PAPARAN JALAN KERJA -->
+      <!-- MAIN SOLUTION DISPLAY CARD -->
       <div class="bg-white rounded-3xl p-6 md:p-8 shadow-md border border-purple-100 relative overflow-hidden">
         
-        <!-- HIASAN STIKER & STAISYONERI -->
+        <!-- STICKER & STATIONERY DECORATIONS -->
         <div class="absolute top-4 right-4 hidden md:flex items-center gap-2 opacity-80 pointer-events-none">
-          <span class="px-3 py-1 rounded-full bg-pink-100 text-pink-700 font-handwriting text-sm border border-pink-200">✨ Formula Nota</span>
+          <span class="px-3 py-1 rounded-full bg-pink-100 text-pink-700 font-handwriting text-sm border border-pink-200">✨ Formula Note</span>
           <span class="px-3 py-1 rounded-full bg-amber-100 text-amber-700 font-handwriting text-sm border border-amber-200">📐 Product Rule</span>
         </div>
 
-        <!-- TAJUK SLAID -->
+        <!-- SLIDE HEADER -->
         <div class="mb-6 border-b border-dashed border-slate-200 pb-4">
           <div class="inline-block px-4 py-1.5 rounded-2xl bg-sky-100 text-sky-800 font-bold text-sm mb-2 shadow-sm font-handwriting">
             Product Rule
           </div>
           
-          <!-- BAR FORMULA -->
+          <!-- FORMULA BAR -->
           <div class="bg-slate-50/80 p-4 rounded-2xl border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <div class="text-sm font-bold text-slate-700">Formula Petua Hasil Darab:</div>
+            <div class="text-sm font-bold text-slate-700">Product Rule Formula:</div>
             <div id="formula-box" class="text-base font-bold text-indigo-900 bg-white px-4 py-2 rounded-xl shadow-inner border border-slate-200"></div>
           </div>
         </div>
 
-        <!-- TUKAR MOD PAPARAN -->
+        <!-- DISPLAY MODE TOGGLE -->
         <div class="flex items-center justify-between mb-6 bg-purple-50/50 p-2.5 rounded-2xl border border-purple-100">
-          <div class="text-xs font-bold text-purple-900 px-2">Mod Tunjukkan Jalan Kerja:</div>
+          <div class="text-xs font-bold text-purple-900 px-2">Solution Display Mode:</div>
           <div class="flex items-center gap-1">
             <button id="mode-all" onclick="setStepRevealMode('all')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-white text-purple-700 shadow-sm border border-purple-200">
-              Tunjuk Semua
+              Show All
             </button>
             <button id="mode-step" onclick="setStepRevealMode('step')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all text-slate-600 hover:text-purple-700">
-              Langkah demi Langkah
+              Step-by-Step
             </button>
           </div>
         </div>
 
-        <!-- BEKAS LANGKAH DEMI LANGKAH (STEP 1 - 5) -->
+        <!-- STEP-BY-STEP CONTAINER (STEP 1 - 5) -->
         <div class="space-y-6">
 
-          <!-- SOALAN SEMASA -->
+          <!-- CURRENT QUESTION -->
           <div class="flex items-center gap-3">
-            <span class="text-indigo-600 font-bold text-lg font-handwriting">Soalan:</span>
+            <span class="text-indigo-600 font-bold text-lg font-handwriting">Question:</span>
             <div id="current-question-display" class="text-lg md:text-xl font-bold text-slate-900"></div>
           </div>
 
@@ -295,11 +295,11 @@
               <div class="flex-1">
                 <div class="flex items-center gap-2 mb-3">
                   <span class="px-2.5 py-1 rounded-md bg-amber-400 text-amber-950 font-black text-xs uppercase tracking-wider shadow-sm font-handwriting">STEP 1</span>
-                  <span class="text-xs font-bold text-slate-600">Cari <span class="text-pink-600 font-black">u</span> & <span class="text-indigo-600 font-black">v</span></span>
+                  <span class="text-xs font-bold text-slate-600">Find <span class="text-pink-600 font-black">u</span> & <span class="text-indigo-600 font-black">v</span></span>
                 </div>
                 <ul class="text-xs text-slate-500 mb-4 list-disc list-inside space-y-1">
-                  <li><span class="text-pink-600 font-bold">u</span> = fungsi depan</li>
-                  <li><span class="text-indigo-600 font-bold">v</span> = fungsi belakang</li>
+                  <li><span class="text-pink-600 font-bold">u</span> = front function</li>
+                  <li><span class="text-indigo-600 font-bold">v</span> = back function</li>
                 </ul>
 
                 <div class="space-y-3 bg-white p-3.5 rounded-xl border border-amber-200/60 shadow-sm">
@@ -318,13 +318,13 @@
               <div class="flex-1">
                 <div class="flex items-center gap-2 mb-3">
                   <span class="px-2.5 py-1 rounded-md bg-amber-400 text-amber-950 font-black text-xs uppercase tracking-wider shadow-sm font-handwriting">STEP 2</span>
-                  <span class="text-xs font-bold text-slate-600">Pembezaan <span class="text-pink-600 font-black">u</span> & <span class="text-indigo-600 font-black">v</span></span>
+                  <span class="text-xs font-bold text-slate-600">Differentiate <span class="text-pink-600 font-black">u</span> & <span class="text-indigo-600 font-black">v</span></span>
                 </div>
 
-                <!-- DIAGRAM SILANG LENGKAP DENGAN MATA ANAK PANAH KECIL -->
+                <!-- CROSS DIAGRAM WITH SMALL ARROWHEAD -->
                 <div class="relative bg-white p-4 rounded-xl border border-amber-200/60 shadow-sm">
                   
-                  <!-- SVG DIAGRAM SILANG ANAK PANAH MERAH -->
+                  <!-- SVG CROSS DIAGRAM RED ARROWS -->
                   <svg class="absolute inset-0 w-full h-full pointer-events-none z-10" preserveAspectRatio="none" viewBox="0 0 200 120">
                     <defs>
                       <marker id="arrowhead" markerWidth="4" markerHeight="3" refX="3.5" refY="1.5" orient="auto">
@@ -335,7 +335,7 @@
                     <line x1="138" y1="38" x2="62" y2="76" stroke="#ef4444" stroke-width="1.5" stroke-opacity="0.55" marker-end="url(#arrowhead)" class="cross-arrow-line"/>
                   </svg>
 
-                  <!-- GRID 2x2 UNTUK SEBUTAN U, V, DU/DX, DV/DX -->
+                  <!-- 2x2 GRID FOR U, V, DU/DX, DV/DX -->
                   <div class="grid grid-cols-2 gap-x-4 gap-y-6 relative z-0 text-center">
                     <div class="p-1.5 bg-pink-50/90 rounded-lg border border-pink-200 relative">
                       <span class="text-[10px] text-pink-500 font-bold block relative z-20">u</span>
@@ -379,7 +379,7 @@
             <div class="flex items-center justify-between mb-3">
               <div class="flex items-center gap-2">
                 <span class="px-2.5 py-1 rounded-md bg-amber-400 text-amber-950 font-black text-xs uppercase tracking-wider shadow-sm font-handwriting">STEP 3</span>
-                <span class="text-xs font-bold text-slate-700">Gantikan ke Dalam Formula</span>
+                <span class="text-xs font-bold text-slate-700">Substitute into Formula</span>
               </div>
               <span class="text-[11px] text-rose-500 font-semibold font-handwriting">v · (du/dx) + u · (dv/dx)</span>
             </div>
@@ -394,9 +394,9 @@
             <div class="flex items-center justify-between mb-3">
               <div class="flex items-center gap-2">
                 <span class="px-2.5 py-1 rounded-md bg-amber-400 text-amber-950 font-black text-xs uppercase tracking-wider shadow-sm font-handwriting">STEP 4</span>
-                <span class="text-xs font-bold text-slate-700">Pemfaktoran (Factorize)</span>
+                <span class="text-xs font-bold text-slate-700">Factorize</span>
               </div>
-              <span class="text-[11px] text-emerald-600 font-semibold">Keluarkan Faktor Sepunya</span>
+              <span class="text-[11px] text-emerald-600 font-semibold">Factor Out Common Terms</span>
             </div>
 
             <div class="bg-white p-4 rounded-xl border border-emerald-200 shadow-sm overflow-x-auto">
@@ -409,9 +409,9 @@
             <div class="flex items-center justify-between mb-3">
               <div class="flex items-center gap-2">
                 <span class="px-2.5 py-1 rounded-md bg-purple-500 text-white font-black text-xs uppercase tracking-wider shadow-sm font-handwriting">STEP 5</span>
-                <span class="text-xs font-bold text-purple-900">Permudahkan / Selesaikan</span>
+                <span class="text-xs font-bold text-purple-900">Simplify / Solve</span>
               </div>
-              <span class="text-[11px] text-purple-600 font-bold">Jawapan Akhir</span>
+              <span class="text-[11px] text-purple-600 font-bold">Final Answer</span>
             </div>
 
             <div class="bg-white p-4 rounded-xl border border-purple-300 shadow-md overflow-x-auto space-y-3">
@@ -422,17 +422,17 @@
 
         </div>
 
-        <!-- NAVIGASI LANGKAH DEMI LANGKAH -->
+        <!-- STEP-BY-STEP NAVIGATION -->
         <div id="step-nav-controls" class="hidden mt-6 flex items-center justify-between pt-4 border-t border-slate-200">
           <button onclick="changeRevealedStep(-1)" id="btn-prev-step" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs flex items-center gap-1.5 transition-all">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-            Langkah Sebelum
+            Previous Step
           </button>
           
-          <span id="step-indicator-text" class="text-xs font-bold text-slate-500">Langkah 1 daripada 5</span>
+          <span id="step-indicator-text" class="text-xs font-bold text-slate-500">Step 1 of 5</span>
 
           <button onclick="changeRevealedStep(1)" id="btn-next-step" class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs flex items-center gap-1.5 transition-all shadow-sm">
-            Langkah Seterusnya
+            Next Step
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
           </button>
         </div>
@@ -446,12 +446,12 @@
   <!-- FOOTER -->
   <footer class="mt-10 border-t border-slate-200 bg-white/60 py-4 text-center text-xs text-slate-500">
     <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-      <p class="font-medium">Simulator Matematik Petua Hasil Darab Interaktif</p>
-      <p class="text-slate-400">© 2026 Matematik Tingkatan / Kolej / Matrikulasi</p>
+      <p class="font-medium">Interactive Product Rule Mathematics Simulator</p>
+      <p class="text-slate-400">© 2026 High School / College / Matriculation Mathematics</p>
     </div>
   </footer>
 
-  <!-- MODAL PANDUAN PENGGUNA -->
+  <!-- USER GUIDE MODAL -->
   <div id="manualModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
     <div class="bg-white rounded-3xl max-w-2xl w-full p-6 md:p-8 shadow-2xl border border-purple-100 relative max-h-[90vh] overflow-y-auto">
       
@@ -464,51 +464,51 @@
           📖
         </div>
         <div>
-          <h3 class="text-xl font-bold text-slate-900 font-handwriting">Panduan & Manual Pengguna</h3>
-          <p class="text-xs text-slate-500">Panduan Lengkap Petua Hasil Darab Dinamik</p>
+          <h3 class="text-xl font-bold text-slate-900 font-handwriting">User Guide & Manual</h3>
+          <p class="text-xs text-slate-500">Complete Guide to the Dynamic Product Rule</p>
         </div>
       </div>
 
       <div class="space-y-4 text-sm text-slate-600 leading-relaxed">
         <div class="p-4 rounded-2xl bg-purple-50/70 border border-purple-100">
-          <h4 class="font-bold text-purple-900 text-sm mb-1">1. Bilakah Petua Hasil Darab Digunakan?</h4>
+          <h4 class="font-bold text-purple-900 text-sm mb-1">1. When is the Product Rule Used?</h4>
           <p class="text-xs">
-            Petua Hasil Darab digunakan apabila satu fungsi terdiri daripada hasil darab dua ungkapan algebra yang mengandungi pembolehubah x, iaitu berbentuk <span class="font-bold text-purple-700">y = u · v</span>.
+            The Product Rule is used when a function is composed of the product of two algebraic expressions containing the variable x, expressed in the form <span class="font-bold text-purple-700">y = u · v</span>.
           </p>
         </div>
 
         <div class="p-4 rounded-2xl bg-pink-50/70 border border-pink-100">
-          <h4 class="font-bold text-pink-900 text-sm mb-2">2. Apakah 5 Langkah Utama Pembelajaran?</h4>
+          <h4 class="font-bold text-pink-900 text-sm mb-2">2. What are the 5 Main Learning Steps?</h4>
           <ol class="list-decimal list-inside text-xs space-y-1.5 font-medium">
-            <li><strong class="text-pink-700">Kenal pasti u & v:</strong> u ialah fungsi depan dan v ialah fungsi belakang.</li>
-            <li><strong class="text-amber-700">Bezakannya:</strong> Cari terbitan du/dx dan dv/dx menggunakan petua rantai/kuasa.</li>
-            <li><strong class="text-rose-700">Gantikan ke dalam formula:</strong> Formula ialah dy/dx = v(du/dx) + u(dv/dx).</li>
-            <li><strong class="text-emerald-700">Pemfaktoran (Factorize):</strong> Keluarkan faktor sepunya tertinggi (kuasa kurungan terkecil dan pekali).</li>
-            <li><strong class="text-purple-700">Permudahkan:</strong> Kembangkan baki di dalam kurungan dan kumpulkan sebutan serupa.</li>
+            <li><strong class="text-pink-700">Identify u & v:</strong> u is the front function and v is the back function.</li>
+            <li><strong class="text-amber-700">Differentiate:</strong> Find derivatives du/dx and dv/dx using the chain/power rule.</li>
+            <li><strong class="text-rose-700">Substitute into formula:</strong> The formula is dy/dx = v(du/dx) + u(dv/dx).</li>
+            <li><strong class="text-emerald-700">Factorize:</strong> Factor out the highest common factors (lowest power brackets & coefficients).</li>
+            <li><strong class="text-purple-700">Simplify:</strong> Expand remaining terms inside brackets and combine like terms.</li>
           </ol>
         </div>
 
         <div class="p-4 rounded-2xl bg-sky-50/70 border border-sky-100">
-          <h4 class="font-bold text-sky-900 text-sm mb-1">3. Cara Menggunakan Simulator Ini</h4>
+          <h4 class="font-bold text-sky-900 text-sm mb-1">3. How to Use This Simulator</h4>
           <ul class="list-disc list-inside text-xs space-y-1">
-            <li>Pilih struktur soalan di panel kiri terlebih dahulu.</li>
-            <li>Suaikan nilai ungkapan u(x) dan v(x) mengikut soalan anda.</li>
-            <li>Gunakan butang kuasa pantas (x², x³) atau taip secara biasa tanpa perlu bimbang tentang simbol ^.</li>
-            <li>Tekan <strong>"Simulasi & Kira Jalan Kerja"</strong> untuk melihat langkah pengiraan penuh.</li>
+            <li>Select the question structure on the left panel first.</li>
+            <li>Customize the expression and power values for your specific question.</li>
+            <li>Use the quick power toolbar buttons (x², x³) or type normally without worrying about the ^ symbol.</li>
+            <li>Click <strong>"Simulate & Calculate Steps"</strong> to view the full step-by-step solution.</li>
           </ul>
         </div>
       </div>
 
       <div class="mt-6 text-right">
         <button onclick="toggleManualModal(false)" class="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-sm shadow-md transition-all">
-          Faham, Mulakan Simulator!
+          Got It, Start Simulator!
         </button>
       </div>
 
     </div>
   </div>
 
-  <!-- ENJIN JAVASCRIPT DENGAN FORMAT KATEX & AUTO-CONVERT SUPERSCRIPT -->
+  <!-- JAVASCRIPT ENGINE WITH KATEX FORMATTING & AUTO-CONVERT SUPERSCRIPT -->
   <script>
     let currentRevealMode = 'all';
     let currentStepIndex = 1;
@@ -524,7 +524,7 @@
       lastFocusedInputId = id;
     }
 
-    // FUNGSI AUTO-FORMAT PENAIPAN KUASA SIMBOL ^ KEPADA UNICODE SUPERSCRIPT
+    // AUTO-FORMAT POWER INPUT FROM ^ TO UNICODE SUPERSCRIPT
     function formatPowerInput(e) {
       let input = e.target;
       let start = input.selectionStart;
@@ -549,7 +549,7 @@
       }
     }
 
-    // FUNGSI SISIP SIMBOL KUASA PANTAS
+    // INSERT QUICK POWER SYMBOL
     function insertSymbol(sym) {
       const input = document.getElementById(lastFocusedInputId || 'v_base');
       if (!input) return;
@@ -596,7 +596,7 @@
       if (!str) return [0];
       let clean = str.replace(/\s+/g, '').toLowerCase();
 
-      // Tukar simbol kuasa superscript unicode kepada ^n untuk enjin algebra
+      // Convert unicode superscript powers to ^n for algebra engine
       clean = clean
         .replace(/²/g, '^2')
         .replace(/³/g, '^3')
@@ -758,11 +758,11 @@
       return `${baseTex}^{${pow}}`;
     }
 
-    // FUNGSI SUSUN FAKTOR JAWAPAN (NOMBOR BULAT -> UNKNOWN -> UNKNOWN KUASA -> KURUNGAN)
+    // ORDERING FUNCTION: (WHOLE NUMBER -> UNKNOWN -> UNKNOWN WITH POWER -> BRACKETS)
     function buildOrderedProductTex(integerCoeff, monomialPower, bracketsArray) {
       let parts = [];
 
-      // 1. Nombor Bulat
+      // 1. Whole Number
       if (integerCoeff !== 1) {
         if (integerCoeff === -1) {
           parts.push("-");
@@ -771,17 +771,17 @@
         }
       }
 
-      // 2. Unknown (x) - Kuasa 1
+      // 2. Unknown (x) - Power 1
       if (monomialPower === 1) {
         parts.push("x");
       }
 
-      // 3. Unknown dengan Kuasa (x^k, k > 1)
+      // 3. Unknown with Power (x^k, k > 1)
       if (monomialPower > 1) {
         parts.push(`x^{${monomialPower}}`);
       }
 
-      // 4. Kurungan
+      // 4. Brackets
       bracketsArray.forEach(b => {
         if (b && b.trim().length > 0) {
           parts.push(b);
@@ -797,7 +797,7 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      // Rendung Label Templat menggunakan Format KaTeX
+      // Render Template Labels using KaTeX
       katex.render("y = x^m(ax + b)^n", document.getElementById('tmpl-text-1'), { displayMode: false });
       katex.render("y = (ax + b)^m(cx + d)^n", document.getElementById('tmpl-text-2'), { displayMode: false });
       katex.render("y = (ax^2 + b)^m(cx + d)^n", document.getElementById('tmpl-text-3'), { displayMode: false });
@@ -880,11 +880,11 @@
       katex.render(`\\frac{du}{dx} = ${duTex}`, document.getElementById('grid-dudx'), { displayMode: false, throwOnError: false });
       katex.render(`\\frac{dv}{dx} = ${dvTex}`, document.getElementById('grid-dvdx'), { displayMode: false, throwOnError: false });
 
-      // STEP 3: SUBSTITUSI
+      // STEP 3: SUBSTITUTION
       const step3Tex = `\\frac{dy}{dx} = ${vTex} \\cdot [${duTex}] + ${uTex} \\cdot [${dvTex}]`;
       katex.render(step3Tex, document.getElementById('step3-display'), { displayMode: false, throwOnError: false });
 
-      // STEP 4: PEMFAKTORAN (NOMBOR BULAT -> UNKNOWN -> UNKNOWN KUASA -> KURUNGAN)
+      // STEP 4: FACTORIZATION (NUMBER -> UNKNOWN -> POWER -> BRACKETS)
       let isUMonomial = (uBase.replace(/\s+/g,'').toLowerCase() === 'x');
       let isVMonomial = (vBase.replace(/\s+/g,'').toLowerCase() === 'x');
 
@@ -920,7 +920,7 @@
       const innerTerm1 = `${puRedTex}${vBaseTexFormatted}`;
       const innerTerm2 = `${pvRedTex}${vBaseTexFormatted}`;
 
-      // Faktor luar untuk Step 4
+      // Outer factors for Step 4
       let bracketsStep4 = [];
       if (commonVBracket) bracketsStep4.push(commonVBracket);
       if (commonUBracket) bracketsStep4.push(commonUBracket);
@@ -929,7 +929,7 @@
       const step4Tex = `= ` + buildOrderedProductTex(overallGcd, commonMonomialPow, bracketsStep4);
       katex.render(step4Tex, document.getElementById('step4-display'), { displayMode: false, throwOnError: false });
 
-      // STEP 5: PERMUDAHKAN JAWAPAN AKHIR PIAWAI
+      // STEP 5: SIMPLIFY FINAL ANSWER
       const term1Red = scalePoly(term1Poly, 1 / overallGcd);
       const term2Red = scalePoly(term2Poly, 1 / overallGcd);
 
@@ -1005,7 +1005,7 @@
         card4.style.display = (currentStepIndex >= 4) ? 'block' : 'none';
         card5.style.display = (currentStepIndex >= 5) ? 'block' : 'none';
 
-        document.getElementById('step-indicator-text').innerText = `Langkah ${currentStepIndex} daripada 5`;
+        document.getElementById('step-indicator-text').innerText = `Step ${currentStepIndex} of 5`;
 
         document.getElementById('btn-prev-step').disabled = (currentStepIndex === 1);
         document.getElementById('btn-next-step').disabled = (currentStepIndex === 5);
