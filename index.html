@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Rule Calculator & Blank Worksheet Generator</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- KaTeX for math rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+  <!-- Nerdamer Symbolic Calculus Engine (via jsDelivr with fallback) -->
+  <script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/nerdamer.core.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/Algebra.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/Calculus.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/Solve.js"></script>
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    .notebook-paper {
+      background-color: #fcfcf7;
+      background-image: linear-gradient(#e5e7eb 1px, transparent 1px);
+      background-size: 100% 2.2rem;
+      line-height: 2.2rem;
+    }
+
+    .notebook-margin {
+      border-left: 2px solid #f87171;
+    }
+
+    .fill-blank {
+      display: inline-block;
+      width: 3rem;
+      height: 1.8rem;
+      border: 2px solid #94a3b8;
+      border-radius: 4px;
+      background-color: #ffffff;
+      vertical-align: middle;
+      margin: 0 4px;
+    }
+
+    @media print {
+      body { background-color: white !important; }
+      header, .no-print { display: none !important; }
+      main { display: block !important; width: 100% !important; max-width: 100% !important; padding: 0 !important; }
+      .notebook-paper { background-color: white !important; border: none !important; box-shadow: none !important; }
+    }
+  </style>
+</head>
+<body class="bg-slate-100 min-h-screen text-slate-800 pb-12 font-sans">
+
+  <!-- Header -->
+  <header class="bg-indigo-700 text-white shadow-lg py-4 px-4 mb-6 no-print">
+    <div class="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
+      <div class="flex items-center space-x-3">
+        <div class="bg-white text-indigo-700 p-2.5 rounded-xl shadow-md">
+          <i class="fa-solid fa-file-pen text-2xl"></i>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold tracking-tight">Product Rule Fill-in-the-Blank Generator</h1>
+          <p class="text-indigo-200 text-xs">Enter coefficients and powers to generate clean step-by-step solutions</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-12 gap-8">
+    
+    <!-- Input Panel (Left Side) -->
+    <section class="lg:col-span-5 bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col gap-5 h-fit no-print">
+      
+      <!-- Question Template Selection -->
+      <div>
+        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+          <i class="fa-solid fa-shapes text-indigo-600 me-1"></i> Step 1: Choose Question Format / Structure
+        </label>
+        
+        <!-- Question Structure Dropdown -->
+        <select id="questionTemplate" onchange="applyQuestionTemplate()" class="w-full p-2.5 text-xs font-semibold rounded-xl border-2 border-indigo-200 bg-indigo-50/50 text-indigo-900 focus:ring-2 focus:ring-indigo-500">
+          <option value="b1">Format 1: y = (a xⁿ + b)(c xᵐ + d)</option>
+          <option value="b2">Format 2: y = xⁿ (a x + b)ᵖ</option>
+          <option value="b3">Format 3: y = (x + a)ᵖ (x + b)𝑞</option>
+          <option value="b4">Format 4 (General): y = (a xⁿ + b)ᵖ · (c xᵐ + d)𝑞</option>
+        </select>
+      </div>
+
+      <hr class="border-slate-100">
+
+      <!-- Form Inputs / Coefficients & Powers -->
+      <div>
+        <h2 class="text-base font-bold text-slate-900 mb-1 flex items-center gap-2">
+          <i class="fa-solid fa-list-ol text-indigo-600"></i> Step 2: Enter Question Values
+        </h2>
+        <div id="equationPreviewBox" class="bg-indigo-900 text-white p-3 rounded-xl mb-4 text-center text-sm font-semibold shadow-inner">
+          <span class="text-xs text-indigo-300 block mb-1">Live Equation Preview:</span>
+          <span id="liveEquationText">$y = (2x^3 - 5)(x^2 + 4)$</span>
+        </div>
+
+        <form id="boxForm" onsubmit="event.preventDefault(); renderSolution();" class="space-y-4">
+          
+          <!-- Function u(x) -->
+          <div class="bg-indigo-50/60 p-3.5 rounded-xl border border-indigo-100 space-y-2">
+            <span class="text-xs font-bold text-indigo-900 block">First Function, u:</span>
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <div id="fieldA">
+                <label class="block text-slate-600 mb-0.5">x Coefficient (a):</label>
+                <input type="number" id="valA" value="2" oninput="renderSolution()" step="any" class="w-full p-2 border rounded-lg text-center font-bold font-mono focus:ring-2 focus:ring-indigo-500 bg-white">
+              </div>
+              <div id="fieldN">
+                <label class="block text-slate-600 mb-0.5">x Power (n):</label>
+                <input type="number" id="valN" value="3" oninput="renderSolution()" step="any" class="w-full p-2 border rounded-lg text-center font-bold font-mono focus:ring-2 focus:ring-indigo-500 bg-white">
+              </div>
+              <div id="fieldB">
+                <label class="block text-slate-600 mb-0.5">Constant (b):</label>
+                <input type="number" id="valB" value="-5" oninput="renderSolution()" step="any" class="w-full p-2 border rounded-lg text-center font-bold font-mono focus:ring-2 focus:ring-indigo-500 bg-white">
+              </div>
+              <div id="fieldP">
+                <label class="block text-slate-600 mb-0.5">Bracket Power (p):</label>
+                <input type="number" id="valP" value="1" oninput="renderSolution()" step="any" class="w-full p-2 border rounded-lg text-center font-bold font-mono focus:ring-2 focus:ring-indigo-500 bg-white">
+              </div>
+            </div>
+          </div>
+
+          <!-- Function v(x) -->
+          <div class="bg-emerald-50/60 p-3.5 rounded-xl border border-emerald-100 space-y-2">
+            <span class="text-xs font-bold text-emerald-900 block">Second Function, v:</span>
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <div id="fieldC">
+                <label class="block text-slate-600 mb-0.5">x Coefficient (c):</label>
+                <input type="number" id="valC" value="1" oninput="renderSolution()" step="any" class="w-full p-2 border rounded-lg text-center font-bold font-mono focus:ring-2 focus:ring-emerald-500 bg-white">
+              </div>
+              <div id="fieldM">
+                <label class="block text-slate-600 mb-0.5">x Power (m):</label>
+                <input type="number" id="valM" value="2" oninput="renderSolution()" step="any" class="w-full p-2 border rounded-lg text-center font-bold font-mono focus:ring-2 focus:ring-emerald-500 bg-white">
+              </div>
+              <div id="fieldD">
+                <label class="block text-slate-600 mb-0.5">Constant (d):</label>
+                <input type="number" id="valD" value="4" oninput="renderSolution()" step="any" class="w-full p-2 border rounded-lg text-center font-bold font-mono focus:ring-2 focus:ring-emerald-500 bg-white">
+              </div>
+              <div id="fieldQ">
+                <label class="block text-slate-600 mb-0.5">Bracket Power (q):</label>
+                <input type="number" id="valQ" value="1" oninput="renderSolution()" step="any" class="w-full p-2 border rounded-lg text-center font-bold font-mono focus:ring-2 focus:ring-emerald-500 bg-white">
+              </div>
+            </div>
+          </div>
+
+          <!-- Display Mode -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Choose Worksheet Display Mode:</label>
+            <select id="displayMode" onchange="renderSolution()" class="w-full p-2.5 text-xs rounded-xl border border-slate-300 bg-white focus:ring-2 focus:ring-indigo-500">
+              <option value="solved">Full Solution (With Answer)</option>
+              <option value="blank">Blank Practice Worksheet [  ] (For Manual Practice)</option>
+            </select>
+          </div>
+
+          <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2 text-sm">
+            <i class="fa-solid fa-arrows-rotate"></i> Update Worksheet
+          </button>
+        </form>
+      </div>
+
+    </section>
+
+    <!-- Notebook Paper Display (Right Side) -->
+    <section class="lg:col-span-7 bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden">
+      <!-- Notebook Header -->
+      <div class="bg-amber-100/60 px-6 py-3 border-b border-amber-200/80 flex justify-between items-center text-xs font-semibold text-amber-900">
+        <div class="flex items-center gap-2">
+          <span class="inline-block w-3 h-3 rounded-full bg-red-400"></span>
+          <span>PRODUCT RULE (DIFFERENTIATION)</span>
+        </div>
+        <div class="text-slate-500">
+          DATE: <span id="dateDisplay">8/28/2026</span>
+        </div>
+      </div>
+
+      <!-- Lined Notebook Paper -->
+      <div id="notebookPaper" class="notebook-paper p-6 sm:p-8 min-h-[550px]">
+        <div class="notebook-margin pl-4 sm:pl-6 space-y-6">
+          <div id="paperOutput">
+            <!-- Output generated via JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    document.getElementById('dateDisplay').textContent = new Date().toLocaleDateString('en-US', {
+      day: 'numeric',
+      month: 'numeric',
+      year: 'numeric'
+    });
+
+    function buildPolynomialStr(coef, exp, constVal, power) {
+      let inner = '';
+      if (coef !== 0) {
+        if (coef === 1) inner += (exp === 1 ? 'x' : (exp === 0 ? '1' : `x^${exp}`));
+        else if (coef === -1) inner += (exp === 1 ? '-x' : (exp === 0 ? '-1' : `-x^${exp}`));
+        else inner += (exp === 1 ? `${coef}*x` : (exp === 0 ? `${coef}` : `${coef}*x^${exp}`));
+      }
+
+      if (constVal > 0) {
+        inner += (inner ? ' + ' : '') + constVal;
+      } else if (constVal < 0) {
+        inner += (inner ? ' - ' : '-') + Math.abs(constVal);
+      }
+
+      if (!inner) inner = '0';
+
+      if (power === 1) {
+        return `(${inner})`;
+      } else {
+        return `(${inner})^${power}`;
+      }
+    }
+
+    function toTexTerm(coef, exp) {
+      if (coef === 0) return '';
+      let s = '';
+      if (exp === 0) return `${coef}`;
+      if (coef === 1) s = '';
+      else if (coef === -1) s = '-';
+      else s = `${coef}`;
+      
+      if (exp === 1) s += 'x';
+      else s += `x^{${exp}}`;
+      return s;
+    }
+
+    function toTexPoly(coef, exp, constVal, power) {
+      let parts = [];
+      const term1 = toTexTerm(coef, exp);
+      if (term1) parts.push(term1);
+      if (constVal > 0) {
+        parts.push(`+ ${constVal}`);
+      } else if (constVal < 0) {
+        parts.push(`- ${Math.abs(constVal)}`);
+      }
+      let inner = parts.join(' ') || '0';
+      if (power > 1) {
+        return `(${inner})^{${power}}`;
+      }
+      return inner;
+    }
+
+    function nativeSolveProductRule(a, n, b, p, c, m, d, q) {
+      const texU = toTexPoly(a, n, b, p);
+      const texV = toTexPoly(c, m, d, q);
+
+      let duInnerCoef = a * n;
+      let duInnerExp = n - 1;
+      let texDuTerm = toTexTerm(duInnerCoef, duInnerExp) || '0';
+      let texDu = (p === 1) ? texDuTerm : `${p} (${toTexPoly(a, n, b, p - 1)}) \\cdot (${texDuTerm})`;
+
+      let dvInnerCoef = c * m;
+      let dvInnerExp = m - 1;
+      let texDvTerm = toTexTerm(dvInnerCoef, dvInnerExp) || '0';
+      let texDv = (q === 1) ? texDvTerm : `${q} (${toTexPoly(c, m, d, q - 1)}) \\cdot (${texDvTerm})`;
+
+      let texExpanded = '';
+      let texFactored = '';
+
+      if (p === 1 && q === 1) {
+        let term1Coef = a * c * (n + m);
+        let term1Exp = n + m - 1;
+        let term2Coef = a * d * n;
+        let term2Exp = n - 1;
+        let term3Coef = b * c * m;
+        let term3Exp = m - 1;
+
+        let terms = {};
+        function addTerm(co, ex) {
+          if (co === 0) return;
+          terms[ex] = (terms[ex] || 0) + co;
+        }
+        addTerm(term1Coef, term1Exp);
+        addTerm(term2Coef, term2Exp);
+        addTerm(term3Coef, term3Exp);
+
+        let sortedExps = Object.keys(terms).map(Number).sort((x, y) => y - x);
+        let polyParts = [];
+        sortedExps.forEach((ex, idx) => {
+          let co = terms[ex];
+          let t = toTexTerm(co, ex);
+          if (!t) return;
+          if (idx === 0) {
+            polyParts.push(t);
+          } else {
+            if (co > 0) polyParts.push(`+ ${t}`);
+            else polyParts.push(`- ${t.replace('-', '')}`);
+          }
+        });
+        texExpanded = polyParts.join(' ') || '0';
+        texFactored = texExpanded;
+      } else {
+        texExpanded = `\\left(${texV}\\right)\\left(${texDu}\\right) + \\left(${texU}\\right)\\left(${texDv}\\right)`;
+        texFactored = texExpanded;
+      }
+
+      return { texU, texV, texDu, texDv, texExpanded, texFactored };
+    }
+
+    function applyQuestionTemplate() {
+      const template = document.getElementById('questionTemplate').value;
+      const fA = document.getElementById('fieldA');
+      const fN = document.getElementById('fieldN');
+      const fB = document.getElementById('fieldB');
+      const fP = document.getElementById('fieldP');
+      
+      const fC = document.getElementById('fieldC');
+      const fM = document.getElementById('fieldM');
+      const fD = document.getElementById('fieldD');
+      const fQ = document.getElementById('fieldQ');
+
+      // Show all by default
+      [fA, fN, fB, fP, fC, fM, fD, fQ].forEach(el => el.classList.remove('hidden'));
+
+      if (template === 'b1') {
+        // y = (ax^n + b)(cx^m + d) -> p=1, q=1
+        document.getElementById('valP').value = 1;
+        document.getElementById('valQ').value = 1;
+        fP.classList.add('hidden');
+        fQ.classList.add('hidden');
+      } else if (template === 'b2') {
+        // y = x^n (a x + b)^p -> u = x^n (a=1, b=0, p=1), v = (cx + d)^q (m=1)
+        document.getElementById('valA').value = 1;
+        document.getElementById('valB').value = 0;
+        document.getElementById('valP').value = 1;
+        document.getElementById('valM').value = 1;
+        fA.classList.add('hidden');
+        fB.classList.add('hidden');
+        fP.classList.add('hidden');
+        fM.classList.add('hidden');
+      } else if (template === 'b3') {
+        // y = (x + b)^p (x + d)^q -> a=1, n=1, c=1, m=1
+        document.getElementById('valA').value = 1;
+        document.getElementById('valN').value = 1;
+        document.getElementById('valC').value = 1;
+        document.getElementById('valM').value = 1;
+        fA.classList.add('hidden');
+        fN.classList.add('hidden');
+        fC.classList.add('hidden');
+        fM.classList.add('hidden');
+      }
+      renderSolution();
+    }
+
+    function loadPreset(a, n, b, p, c, m, d, q, templateId) {
+      if (templateId) {
+        document.getElementById('questionTemplate').value = templateId;
+        applyQuestionTemplate();
+      }
+      document.getElementById('valA').value = a;
+      document.getElementById('valN').value = n;
+      document.getElementById('valB').value = b;
+      document.getElementById('valP').value = p;
+      document.getElementById('valC').value = c;
+      document.getElementById('valM').value = m;
+      document.getElementById('valD').value = d;
+      document.getElementById('valQ').value = q;
+      renderSolution();
+    }
+
+    function renderSolution() {
+      const a = parseFloat(document.getElementById('valA').value) || 0;
+      const n = parseFloat(document.getElementById('valN').value) || 0;
+      const b = parseFloat(document.getElementById('valB').value) || 0;
+      const p = parseFloat(document.getElementById('valP').value) || 1;
+
+      const c = parseFloat(document.getElementById('valC').value) || 0;
+      const m = parseFloat(document.getElementById('valM').value) || 0;
+      const d = parseFloat(document.getElementById('valD').value) || 0;
+      const q = parseFloat(document.getElementById('valQ').value) || 1;
+
+      const mode = document.getElementById('displayMode').value;
+      const container = document.getElementById('paperOutput');
+
+      let texU, texV, texDu, texDv, texExpanded, texFactored;
+
+      // Calculate solution
+      if (typeof nerdamer !== 'undefined') {
+        try {
+          const strU = buildPolynomialStr(a, n, b, p);
+          const strV = buildPolynomialStr(c, m, d, q);
+
+          const nerdU = nerdamer(strU);
+          const nerdV = nerdamer(strV);
+          const nerdDu = nerdamer.diff(strU, 'x');
+          const nerdDv = nerdamer.diff(strV, 'x');
+
+          texU = nerdU.toTeX();
+          texV = nerdV.toTeX();
+          texDu = nerdDu.toTeX();
+          texDv = nerdDv.toTeX();
+
+          const rawDyDx = `(${strV})*(${nerdDu.toString()}) + (${strU})*(${nerdDv.toString()})`;
+          texExpanded = nerdamer.expand(rawDyDx).toTeX();
+          texFactored = nerdamer.factor(rawDyDx).toTeX();
+        } catch (e) {
+          const nativeRes = nativeSolveProductRule(a, n, b, p, c, m, d, q);
+          texU = nativeRes.texU;
+          texV = nativeRes.texV;
+          texDu = nativeRes.texDu;
+          texDv = nativeRes.texDv;
+          texExpanded = nativeRes.texExpanded;
+          texFactored = nativeRes.texFactored;
+        }
+      } else {
+        const nativeRes = nativeSolveProductRule(a, n, b, p, c, m, d, q);
+        texU = nativeRes.texU;
+        texV = nativeRes.texV;
+        texDu = nativeRes.texDu;
+        texDv = nativeRes.texDv;
+        texExpanded = nativeRes.texExpanded;
+        texFactored = nativeRes.texFactored;
+      }
+
+      // Update Live Equation Preview Text Box
+      const liveBox = document.getElementById('liveEquationText');
+      if (liveBox) {
+        liveBox.innerHTML = `$y = (${texU})(${texV})$`;
+        renderMathInElement(liveBox, {
+          delimiters: [{left: '$', right: '$', display: false}],
+          throwOnError: false
+        });
+      }
+
+      try {
+        if (mode === 'blank') {
+          container.innerHTML = `
+            <div class="text-lg font-bold text-slate-800 border-b border-dashed border-slate-300 pb-3">
+              <span class="text-indigo-600 font-extrabold mr-2">(1)</span> 
+              <span>$y = (${texU})(${texV})$</span>
+              <span class="text-xs text-red-500 font-normal ml-3 bg-red-50 border border-red-200 px-2 py-0.5 rounded">2 Functions — Product Rule</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50/80 p-3 rounded-xl border border-slate-200/80 my-3">
+              <div>
+                <span class="text-xs text-slate-500 block font-medium">Function u:</span>
+                <div class="text-base font-semibold text-slate-800">$u = $ <span class="fill-blank"></span></div>
+              </div>
+              <div>
+                <span class="text-xs text-slate-500 block font-medium">Function v:</span>
+                <div class="text-base font-semibold text-slate-800">$v = $ <span class="fill-blank"></span></div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50/80 p-3 rounded-xl border border-slate-200/80 my-3">
+              <div>
+                <span class="text-xs text-slate-500 block font-medium">Derivative (du/dx):</span>
+                <div class="text-base font-semibold text-indigo-700">$\\frac{du}{dx} = $ <span class="fill-blank"></span> $x$ <sup class="fill-blank" style="width:1.5rem;height:1.2rem;"></sup></div>
+              </div>
+              <div>
+                <span class="text-xs text-slate-500 block font-medium">Derivative (dv/dx):</span>
+                <div class="text-base font-semibold text-indigo-700">$\\frac{dv}{dx} = $ <span class="fill-blank"></span> $x$ <sup class="fill-blank" style="width:1.5rem;height:1.2rem;"></sup></div>
+              </div>
+            </div>
+
+            <div class="space-y-4 pt-2">
+              <div class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                <span class="bg-indigo-100 text-indigo-800 text-xs px-2 py-0.5 rounded font-bold">Formula</span>
+                <span>$\\frac{dy}{dx} = v \\frac{du}{dx} + u \\frac{dv}{dx}$</span>
+              </div>
+
+              <div class="text-base py-2">
+                $= ( \quad ) \\cdot ( \quad ) + ( \quad ) \\cdot ( \quad )$
+              </div>
+
+              <div class="text-base py-2 border-t border-slate-200 pt-3">
+                $= $ <span class="fill-blank" style="width:4rem"></span> $x^4 + $ <span class="fill-blank" style="width:4rem"></span> $x^2 + $ <span class="fill-blank" style="width:4rem"></span> $x$
+              </div>
+
+              <div class="text-lg font-bold border-2 border-indigo-400 bg-indigo-50/30 p-3 rounded-xl flex items-center justify-between">
+                <div>
+                  <span class="text-xs text-indigo-600 block uppercase font-semibold">Final Simplified Answer:</span>
+                  <span>$= $ <span class="fill-blank" style="width:12rem; height:2.2rem"></span></span>
+                </div>
+                <span class="text-2xl font-black text-indigo-600">\#</span>
+              </div>
+            </div>
+          `;
+        } else {
+          container.innerHTML = `
+            <div class="text-lg font-bold text-slate-800 border-b border-dashed border-slate-300 pb-3">
+              <span class="text-indigo-600 font-extrabold mr-2">(1)</span> 
+              <span>$y = (${texU})(${texV})$</span>
+              <span class="text-xs text-red-500 font-normal ml-3 bg-red-50 border border-red-200 px-2 py-0.5 rounded">2 Functions — Product Rule</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50/80 p-3 rounded-xl border border-slate-200/80 my-3">
+              <div>
+                <span class="text-xs text-slate-500 block font-medium">Function u:</span>
+                <div class="text-base font-semibold text-slate-800">$u = ${texU}$</div>
+              </div>
+              <div>
+                <span class="text-xs text-slate-500 block font-medium">Function v:</span>
+                <div class="text-base font-semibold text-slate-800">$v = ${texV}$</div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50/80 p-3 rounded-xl border border-slate-200/80 my-3">
+              <div>
+                <span class="text-xs text-slate-500 block font-medium">Derivative du/dx:</span>
+                <div class="text-base font-semibold text-indigo-700">$\\frac{du}{dx} = ${texDu}$</div>
+              </div>
+              <div>
+                <span class="text-xs text-slate-500 block font-medium">Derivative dv/dx:</span>
+                <div class="text-base font-semibold text-indigo-700">$\\frac{dv}{dx} = ${texDv}$</div>
+              </div>
+            </div>
+
+            <div class="space-y-3 pt-2">
+              <div class="text-sm font-semibold text-slate-700 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="bg-indigo-100 text-indigo-800 text-xs px-2 py-0.5 rounded font-bold">Formula</span>
+                  <span>$\\frac{dy}{dx} = v \\frac{du}{dx} + u \\frac{dv}{dx}$</span>
+                </div>
+                <span class="text-xs text-red-500 font-normal italic">* v first, u second</span>
+              </div>
+
+              <div class="text-base overflow-x-auto py-2 bg-amber-50/40 p-2.5 rounded-lg border border-amber-200/60">
+                $= \\left(${texV}\\right) \\cdot \\left(${texDu}\\right) + \\left(${texU}\\right) \\cdot \\left(${texDv}\\right)$
+              </div>
+
+              <div class="text-base text-slate-800 overflow-x-auto py-1">
+                <span class="text-xs text-slate-500 block">Fully Expanded Form:</span>
+                $= ${texExpanded}$
+              </div>
+
+              ${p > 1 || q > 1 ? `
+              <div class="text-base text-slate-800 overflow-x-auto py-1 border-t border-slate-100 pt-2">
+                <span class="text-xs text-slate-500 block">Factored Form:</span>
+                $= ${texFactored}$
+              </div>
+              ` : ''}
+
+              <div class="text-lg font-bold text-slate-900 border-2 border-indigo-600 bg-indigo-50/50 p-3.5 rounded-xl flex items-center justify-between overflow-x-auto mt-4 shadow-sm">
+                <div>
+                  <span class="text-xs text-indigo-600 block uppercase font-semibold">Final Simplified Answer:</span>
+                  <span>$= ${p > 1 || q > 1 ? texFactored : texExpanded}$</span>
+                </div>
+                <span class="text-2xl font-black text-indigo-600 ml-4">\#</span>
+              </div>
+            </div>
+          `;
+        }
+
+        renderMathInElement(container, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false}
+          ],
+          throwOnError: false
+        });
+
+      } catch (e) {
+        console.error(e);
+        container.innerHTML = `<div class="text-red-500 text-sm font-semibold">Error calculating expression. Please verify the input values.</div>`;
+      }
+    }
+
+    window.onload = function() {
+      applyQuestionTemplate();
+    };
+  </script>
+</body>
+</html>
