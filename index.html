@@ -71,6 +71,7 @@
       </div>
       <div class="flex items-center gap-2">
 
+    </div>
   </header>
 
   <main class="max-w-5xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -89,6 +90,7 @@
           <option value="b1">Format 1: y = (a xⁿ + b)(c xᵐ + d)</option>
           <option value="b2">Format 2: y = xⁿ (a x + b)ᵖ</option>
           <option value="b3">Format 3: y = (x + a)ᵖ (x + b)𝑞</option>
+          <option value="b5">Format 5: y = xⁿ (c xᵐ + d)𝑞</option>
           <option value="b4">Format 4 (General): y = (a xⁿ + b)ᵖ · (c xᵐ + d)𝑞</option>
         </select>
       </div>
@@ -352,6 +354,19 @@
         fN.classList.add('hidden');
         fC.classList.add('hidden');
         fM.classList.add('hidden');
+      } else if (template === 'b5') {
+        // y = x^n (c x^m + d)^q -> e.g. y = x^2 (3x^2 + 1)^5
+        document.getElementById('valA').value = 1;
+        document.getElementById('valN').value = 2;
+        document.getElementById('valB').value = 0;
+        document.getElementById('valP').value = 1;
+        document.getElementById('valC').value = 3;
+        document.getElementById('valM').value = 2;
+        document.getElementById('valD').value = 1;
+        document.getElementById('valQ').value = 5;
+        fA.classList.add('hidden');
+        fB.classList.add('hidden');
+        fP.classList.add('hidden');
       }
       renderSolution();
     }
