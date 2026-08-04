@@ -3,594 +3,941 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Product Rule Calculator & Blank Worksheet Generator</title>
-  
-  <!-- Tailwind CSS -->
+  <title>Product Rule Simulator</title>
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- KaTeX for math rendering -->
+  <!-- KaTeX CSS & JS for Math Rendering -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
-
-  <!-- Nerdamer Symbolic Calculus Engine (via jsDelivr with fallback) -->
-  <script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/nerdamer.core.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/Algebra.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/Calculus.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.13/Solve.js"></script>
-
-  <!-- FontAwesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
-    .notebook-paper {
-      background-color: #fcfcf7;
-      background-image: linear-gradient(#e5e7eb 1px, transparent 1px);
-      background-size: 100% 2.2rem;
-      line-height: 2.2rem;
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #f8f6f0;
     }
-
-    .notebook-margin {
-      border-left: 2px solid #f87171;
+    .font-handwriting {
+      font-family: 'Fredoka', cursive;
     }
-
-    .fill-blank {
-      display: inline-block;
-      width: 3rem;
-      height: 1.8rem;
-      border: 2px solid #94a3b8;
-      border-radius: 4px;
-      background-color: #ffffff;
-      vertical-align: middle;
-      margin: 0 4px;
+    /* Aesthetic Grid Notebook Background */
+    .bg-notebook {
+      background-color: #fdfbf7;
+      background-image: 
+        linear-gradient(to right, rgba(180, 195, 225, 0.22) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(180, 195, 225, 0.22) 1px, transparent 1px);
+      background-size: 24px 24px;
     }
-
-    @media print {
-      body { background-color: white !important; }
-      header, .no-print { display: none !important; }
-      main { display: block !important; width: 100% !important; max-width: 100% !important; padding: 0 !important; }
-      .notebook-paper { background-color: white !important; border: none !important; box-shadow: none !important; }
+    /* Dashed Accent Box */
+    .slide-box-dashed {
+      border: 2.5px dashed #f43f5e;
+      background-color: rgba(254, 242, 242, 0.65);
+      border-radius: 12px;
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    /* Cross Arrow Overlay Animation */
+    .cross-arrow-line {
+      stroke-dasharray: 6;
+      animation: dash 20s linear infinite;
+    }
+    @keyframes dash {
+      to {
+        stroke-dashoffset: -100;
+      }
     }
   </style>
 </head>
-<body class="bg-slate-100 min-h-screen text-slate-800 pb-12 font-sans">
+<body class="min-h-screen text-slate-800 bg-notebook flex flex-col justify-between selection:bg-pink-200">
 
-  <!-- Header -->
-  <header class="bg-indigo-700 text-white shadow-lg py-4 px-4 mb-6 no-print">
-    <div class="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
-      <div class="flex items-center space-x-3">
-        <div class="bg-white text-indigo-700 p-2.5 rounded-xl shadow-md">
-          <i class="fa-solid fa-file-pen text-2xl"></i>
+  <!-- TOP NAVIGATION BAR -->
+  <header class="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-purple-100 shadow-sm">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      
+      <!-- Logo & Title -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-400 to-pink-400 flex items-center justify-center text-white shadow-md font-bold text-xl font-handwriting">
+          dy
         </div>
         <div>
-          <h1 class="text-xl font-bold tracking-tight">Product Rule Fill-in-the-Blank Generator</h1>
-          <p class="text-indigo-200 text-xs">Enter coefficients and powers to generate clean step-by-step solutions</p>
+          <h1 class="text-xl md:text-2xl font-bold font-handwriting text-indigo-900 tracking-wide">
+            Rules of Differentiation.
+          </h1>
+          <p class="text-xs text-indigo-500 font-semibold uppercase tracking-wider">
+            Dynamic Product Rule Simulator
+          </p>
         </div>
       </div>
-      <div class="flex items-center gap-2">
-        <a href="user_manual.html" target="_blank" class="bg-indigo-600 hover:bg-indigo-800 text-white px-3.5 py-2 rounded-lg text-xs font-semibold transition flex items-center gap-2 border border-indigo-500 shadow-sm">
-          <i class="fa-solid fa-book-open"></i> MANUAL
-        </a>
+
+      <!-- Main Navigation -->
+      <div class="flex items-center gap-2 md:gap-3">
+        <!-- Home Button -->
+        <button id="btnHome" onclick="resetToHome()" class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 font-semibold text-sm transition-all duration-200 shadow-sm hover:scale-105 active:scale-95 border border-purple-200/60" title="Return to Home">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+          <span class="hidden sm:inline">Home</span>
+        </button>
+
+        <!-- User Guide Button -->
+        <button onclick="toggleManualModal(true)" class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-pink-50 hover:bg-pink-100 text-pink-700 font-semibold text-sm transition-all duration-200 shadow-sm hover:scale-105 active:scale-95 border border-pink-200/60" title="User Guide & Manual">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+          <span class="hidden sm:inline">User Guide</span>
+        </button>
       </div>
+
     </div>
   </header>
 
-  <main class="max-w-5xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-12 gap-8">
-    
-    <!-- Input Panel (Left Side) -->
-    <section class="lg:col-span-5 bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col gap-5 h-fit no-print">
+  <!-- MAIN CONTENT AREA -->
+  <main class="max-w-6xl mx-auto px-4 py-6 w-full flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- LEFT COLUMN: INPUT & BUILDER PANEL (4 Cols) -->
+    <section class="lg:col-span-4 flex flex-col gap-5">
       
-      <!-- Question Template Selection -->
-      <div>
-        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
-          <i class="fa-solid fa-shapes text-indigo-600 me-1"></i> Step 1: Choose Question Format / Structure
-        </label>
-        
-        <!-- Question Structure Dropdown -->
-        <select id="questionTemplate" onchange="applyQuestionTemplate()" class="w-full p-2.5 text-xs font-semibold rounded-xl border-2 border-indigo-200 bg-indigo-50/50 text-indigo-900 focus:ring-2 focus:ring-indigo-500">
-          <option value="b1">Format 1: y = (a xⁿ + b)(c xᵐ + d)</option>
-          <option value="b2">Format 2: y = xⁿ (c x + d)𐞥</option>
-          <option value="b3">Format 3: y = (x + a)ᵖ (x + b)𐞥</option>
-          <option value="b5">Format 5: y = xⁿ (c xᵐ + d)𐞥</option>
-          <option value="b4">Format 4 (General): y = (a xⁿ + b)ᵖ · (c xᵐ + d)𐞥</option>
-        </select>
-      </div>
+      <!-- INPUT CARD -->
+      <div class="bg-white rounded-2xl p-5 shadow-sm border border-indigo-100 flex-1 flex flex-col justify-between">
+        <div>
+          
+          <!-- SECTION 1: SELECT QUESTION STRUCTURE FIRST -->
+          <div class="mb-5 pb-3 border-b border-dashed border-slate-200">
+            <div class="flex items-center justify-between mb-2">
+              <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-purple-500 inline-block"></span>
+                1. Select Question Structure
+              </h2>
+              <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-purple-100 text-purple-800">Step 1</span>
+            </div>
+            <p class="text-xs text-slate-500 mb-3">Choose the structure of the question you want to solve:</p>
+            
+            <div class="grid grid-cols-1 gap-2" id="template-buttons-container">
+              <!-- Template 1 -->
+              <button onclick="selectTemplate('mono_bi')" id="tmpl-mono_bi" class="p-2.5 rounded-xl text-left border transition-all flex items-center justify-between bg-purple-50/80 border-purple-300 text-purple-900 shadow-sm">
+                <div>
+                  <div class="text-xs font-bold">Monomial × Binomial</div>
+                  <div class="text-[11px] text-slate-500 font-mono">y = x^m (ax + b)^n</div>
+                </div>
+                <span class="text-xs font-bold px-2 py-0.5 rounded-md bg-purple-200 text-purple-800">Selected</span>
+              </button>
 
-      <hr class="border-slate-100">
+              <!-- Template 2 -->
+              <button onclick="selectTemplate('bi_bi')" id="tmpl-bi_bi" class="p-2.5 rounded-xl text-left border transition-all flex items-center justify-between bg-white border-slate-200 hover:border-purple-200 text-slate-700">
+                <div>
+                  <div class="text-xs font-bold">Binomial × Binomial</div>
+                  <div class="text-[11px] text-slate-500 font-mono">y = (ax + b)^m (cx + d)^n</div>
+                </div>
+              </button>
 
-      <!-- Form Inputs / Coefficients & Powers -->
-      <div>
-        <h2 class="text-base font-bold text-slate-900 mb-1 flex items-center gap-2">
-          <i class="fa-solid fa-list-ol text-indigo-600"></i> Step 2: Enter Question Values
-        </h2>
-        <div id="equationPreviewBox" class="bg-indigo-900 text-white p-3 rounded-xl mb-4 text-center text-sm font-semibold shadow-inner">
-          <span class="text-xs text-indigo-300 block mb-1">Live Equation Preview:</span>
-          <span id="liveEquationText">$y = (2x^3 - 5)(x^2 + 4)$</span>
+              <!-- Template 3 -->
+              <button onclick="selectTemplate('quad_lin')" id="tmpl-quad_lin" class="p-2.5 rounded-xl text-left border transition-all flex items-center justify-between bg-white border-slate-200 hover:border-purple-200 text-slate-700">
+                <div>
+                  <div class="text-xs font-bold">Quadratic / Polynomial × Linear</div>
+                  <div class="text-[11px] text-slate-500 font-mono">y = (ax^2 + b)^m (cx + d)^n</div>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- SECTION 2: CUSTOMIZE VALUES ONLY -->
+          <div class="mb-4">
+            <div class="flex items-center justify-between mb-2">
+              <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-pink-400 inline-block"></span>
+                2. Customize Values Only
+              </h2>
+              <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-pink-100 text-pink-800">Step 2</span>
+            </div>
+            <p class="text-xs text-slate-500 mb-3">Adjust expressions $u(x)$ and $v(x)$ according to your problem:</p>
+
+            <!-- FORM INPUT U(X) -->
+            <div class="p-3.5 rounded-xl bg-pink-50/70 border border-pink-200 mb-3 shadow-sm">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs font-bold text-pink-700 uppercase tracking-wider">Front Function u(x)</span>
+                <span class="text-[11px] text-pink-500 font-medium">u = (Base)<sup>Power</sup></span>
+              </div>
+              <div class="grid grid-cols-12 gap-2 items-center">
+                <div class="col-span-8">
+                  <label class="text-[10px] text-slate-500 font-medium block mb-0.5">Base Expression u</label>
+                  <input type="text" id="u_base" value="x" class="w-full px-3 py-1.5 text-sm rounded-lg border border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-400 bg-white font-medium">
+                </div>
+                <div class="col-span-4">
+                  <label class="text-[10px] text-slate-500 font-medium block mb-0.5">Power (m)</label>
+                  <input type="number" id="u_pow" value="5" min="1" max="15" class="w-full px-3 py-1.5 text-sm rounded-lg border border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-400 bg-white text-center font-bold">
+                </div>
+              </div>
+            </div>
+
+            <!-- FORM INPUT V(X) -->
+            <div class="p-3.5 rounded-xl bg-indigo-50/70 border border-indigo-200 mb-3 shadow-sm">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs font-bold text-indigo-700 uppercase tracking-wider">Back Function v(x)</span>
+                <span class="text-[11px] text-indigo-500 font-medium">v = (Base)<sup>Power</sup></span>
+              </div>
+              <div class="grid grid-cols-12 gap-2 items-center">
+                <div class="col-span-8">
+                  <label class="text-[10px] text-slate-500 font-medium block mb-0.5">Base Expression v</label>
+                  <input type="text" id="v_base" value="2x + 8" class="w-full px-3 py-1.5 text-sm rounded-lg border border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white font-medium">
+                </div>
+                <div class="col-span-4">
+                  <label class="text-[10px] text-slate-500 font-medium block mb-0.5">Power (n)</label>
+                  <input type="number" id="v_pow" value="6" min="1" max="15" class="w-full px-3 py-1.5 text-sm rounded-lg border border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white text-center font-bold">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ANSWER FORMATTING GUIDE -->
+          <div class="p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-[11px] mb-3 flex items-center gap-2">
+            <span class="text-base">📐</span>
+            <div>
+              <strong class="block">Final Answer Format:</strong>
+              <span class="text-slate-600 font-mono">1. Whole Number → 2. Unknown (x) → 3. Power of Unknown (xⁿ) → 4. Brackets</span>
+            </div>
+          </div>
+
+          <!-- PREVIEW QUESTION Y -->
+          <div class="p-3 rounded-xl bg-slate-100 text-center border border-slate-200 mb-4">
+            <span class="text-[11px] text-slate-400 font-bold block mb-1 uppercase tracking-wider">Current Question Preview</span>
+            <div id="live-question-preview" class="text-base font-semibold text-slate-800"></div>
+          </div>
         </div>
 
-        <form id="boxForm" onsubmit="event.preventDefault(); renderSolution();" class="space-y-4">
-          
-          <!-- Function u(x) -->
-          <div class="bg-indigo-50/60 p-3.5 rounded-xl border border-indigo-100 space-y-2">
-            <span class="text-xs font-bold text-indigo-900 block">First Function, u:</span>
-            <div class="grid grid-cols-2 gap-2 text-xs">
-              <div id="fieldA">
-                <label class="block text-slate-600 mb-0.5">x Coefficient (a):</label>
-                <input type="number" id="valA" value="2" oninput="renderSolution()" step="any" class="w-full p-2 border rounded-lg text-center font-bold font-mono focus:ring-2 focus:ring-indigo-500 bg-white">
-              </div>
-              <div id="fieldN">
-                <label class="block text-slate-600 mb-0.5">x Power (n):</label>
-                <input type="number" id="valN" value="3" oninput="renderSolution()" step="any" class="w-full p-2 border rounded-lg text-center font-bold font-mono focus:ring-2 focus:ring-indigo-500 bg-white">
-              </div>
-              <div id="fieldB">
-                <label class="block text-slate-600 mb-0.5">Constant (b):</label>
-                <input type="number" id="valB" value="-5" oninput="renderSolution()" step="any" class="w-full p-2 border rounded-lg text-center font-bold font-mono focus:ring-2 focus:ring-indigo-500 bg-white">
-              </div>
-              <div id="fieldP">
-                <label class="block text-slate-600 mb-0.5">Bracket Power (p):</label>
-                <input type="number" id="valP" value="1" oninput="renderSolution()" step="any" class="w-full p-2 border rounded-lg text-center font-bold font-mono focus:ring-2 focus:ring-indigo-500 bg-white">
-              </div>
-            </div>
-          </div>
-
-          <!-- Function v(x) -->
-          <div class="bg-emerald-50/60 p-3.5 rounded-xl border border-emerald-100 space-y-2">
-            <span class="text-xs font-bold text-emerald-900 block">Second Function, v:</span>
-            <div class="grid grid-cols-2 gap-2 text-xs">
-              <div id="fieldC">
-                <label class="block text-slate-600 mb-0.5">x Coefficient (c):</label>
-                <input type="number" id="valC" value="1" oninput="renderSolution()" step="any" class="w-full p-2 border rounded-lg text-center font-bold font-mono focus:ring-2 focus:ring-emerald-500 bg-white">
-              </div>
-              <div id="fieldM">
-                <label class="block text-slate-600 mb-0.5">x Power (m):</label>
-                <input type="number" id="valM" value="2" oninput="renderSolution()" step="any" class="w-full p-2 border rounded-lg text-center font-bold font-mono focus:ring-2 focus:ring-emerald-500 bg-white">
-              </div>
-              <div id="fieldD">
-                <label class="block text-slate-600 mb-0.5">Constant (d):</label>
-                <input type="number" id="valD" value="4" oninput="renderSolution()" step="any" class="w-full p-2 border rounded-lg text-center font-bold font-mono focus:ring-2 focus:ring-emerald-500 bg-white">
-              </div>
-              <div id="fieldQ">
-                <label class="block text-slate-600 mb-0.5">Bracket Power (q):</label>
-                <input type="number" id="valQ" value="1" oninput="renderSolution()" step="any" class="w-full p-2 border rounded-lg text-center font-bold font-mono focus:ring-2 focus:ring-emerald-500 bg-white">
-              </div>
-            </div>
-          </div>
-
-          <!-- Display Mode -->
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Choose Worksheet Display Mode:</label>
-            <select id="displayMode" onchange="renderSolution()" class="w-full p-2.5 text-xs rounded-xl border border-slate-300 bg-white focus:ring-2 focus:ring-indigo-500">
-              <option value="solved">Full Solution (With Answer)</option>
-              <option value="blank">Blank Practice Worksheet [  ] (For Manual Practice)</option>
-            </select>
-          </div>
-
-          <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2 text-sm">
-            <i class="fa-solid fa-arrows-rotate"></i> Update Worksheet
+        <!-- SIMULATE & RESET BUTTONS -->
+        <div class="flex gap-2">
+          <button onclick="calculateProductRule()" class="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold text-sm shadow-md hover:shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 002-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+            Simulate & Calculate Steps
           </button>
-        </form>
+          
+          <button onclick="resetInputs()" class="p-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 transition-all border border-slate-300" title="Reset Inputs">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.01M20 20v-5h-.01M4 9a9 9 0 0115.357-2m1.5 8a9 9 0 01-15.357 2"/></svg>
+          </button>
+        </div>
+
       </div>
 
     </section>
 
-    <!-- Notebook Paper Display (Right Side) -->
-    <section class="lg:col-span-7 bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden">
-      <!-- Notebook Header -->
-      <div class="bg-amber-100/60 px-6 py-3 border-b border-amber-200/80 flex justify-between items-center text-xs font-semibold text-amber-900">
-        <div class="flex items-center gap-2">
-          <span class="inline-block w-3 h-3 rounded-full bg-red-400"></span>
-          <span>PRODUCT RULE (DIFFERENTIATION)</span>
+    <!-- RIGHT COLUMN: SIMULATION STEPS OUTPUT (8 Cols) -->
+    <section class="lg:col-span-8 flex flex-col gap-6">
+      
+      <!-- MAIN SOLUTION DISPLAY CARD -->
+      <div class="bg-white rounded-3xl p-6 md:p-8 shadow-md border border-purple-100 relative overflow-hidden">
+        
+        <!-- STICKER & STATIONERY DECORATIONS -->
+        <div class="absolute top-4 right-4 hidden md:flex items-center gap-2 opacity-80 pointer-events-none">
+          <span class="px-3 py-1 rounded-full bg-pink-100 text-pink-700 font-handwriting text-sm border border-pink-200">✨ Formula Note</span>
+          <span class="px-3 py-1 rounded-full bg-amber-100 text-amber-700 font-handwriting text-sm border border-amber-200">📐 Product Rule</span>
         </div>
-        <div class="text-slate-500">
-          DATE: <span id="dateDisplay">8/28/2026</span>
-        </div>
-      </div>
 
-      <!-- Lined Notebook Paper -->
-      <div id="notebookPaper" class="notebook-paper p-6 sm:p-8 min-h-[550px]">
-        <div class="notebook-margin pl-4 sm:pl-6 space-y-6">
-          <div id="paperOutput">
-            <!-- Output generated via JS -->
+        <!-- SLIDE HEADER -->
+        <div class="mb-6 border-b border-dashed border-slate-200 pb-4">
+          <div class="inline-block px-4 py-1.5 rounded-2xl bg-sky-100 text-sky-800 font-bold text-sm mb-2 shadow-sm font-handwriting">
+            Product Rule
+          </div>
+          
+          <!-- FORMULA BAR -->
+          <div class="bg-slate-50/80 p-4 rounded-2xl border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="text-sm font-bold text-slate-700">Product Rule Formula:</div>
+            <div id="formula-box" class="text-base font-bold text-indigo-900 bg-white px-4 py-2 rounded-xl shadow-inner border border-slate-200"></div>
           </div>
         </div>
+
+        <!-- DISPLAY MODE TOGGLE -->
+        <div class="flex items-center justify-between mb-6 bg-purple-50/50 p-2.5 rounded-2xl border border-purple-100">
+          <div class="text-xs font-bold text-purple-900 px-2">Solution Display Mode:</div>
+          <div class="flex items-center gap-1">
+            <button id="mode-all" onclick="setStepRevealMode('all')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-white text-purple-700 shadow-sm border border-purple-200">
+              Show All
+            </button>
+            <button id="mode-step" onclick="setStepRevealMode('step')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all text-slate-600 hover:text-purple-700">
+              Step-by-Step
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP-BY-STEP CONTAINER (STEP 1 - 5) -->
+        <div class="space-y-6">
+
+          <!-- CURRENT QUESTION TITLE -->
+          <div class="flex items-center gap-3">
+            <span class="text-indigo-600 font-bold text-lg font-handwriting">Question:</span>
+            <div id="current-question-display" class="text-lg md:text-xl font-bold text-slate-900"></div>
+          </div>
+
+          <!-- STEP 1 & STEP 2 CONTAINER -->
+          <div id="step-1-2-card" class="p-5 rounded-2xl bg-amber-50/40 border border-amber-200/80 transition-all duration-300">
+            
+            <div class="flex flex-col md:flex-row md:items-start justify-between gap-6">
+              
+              <!-- STEP 1: FIND U & V -->
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-3">
+                  <span class="px-2.5 py-1 rounded-md bg-amber-400 text-amber-950 font-black text-xs uppercase tracking-wider shadow-sm font-handwriting">STEP 1</span>
+                  <span class="text-xs font-bold text-slate-600">Find <span class="text-pink-600 font-black">u</span> & <span class="text-indigo-600 font-black">v</span></span>
+                </div>
+                <ul class="text-xs text-slate-500 mb-4 list-disc list-inside space-y-1">
+                  <li><span class="text-pink-600 font-bold">u</span> = front function</li>
+                  <li><span class="text-indigo-600 font-bold">v</span> = back function</li>
+                </ul>
+
+                <div class="space-y-3 bg-white p-3.5 rounded-xl border border-amber-200/60 shadow-sm">
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-bold text-pink-600 w-8">u =</span>
+                    <div id="step1-u-display" class="text-sm font-semibold"></div>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-bold text-indigo-600 w-8">v =</span>
+                    <div id="step1-v-display" class="text-sm font-semibold"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- STEP 2: DIFFERENTIATE U & V -->
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-3">
+                  <span class="px-2.5 py-1 rounded-md bg-amber-400 text-amber-950 font-black text-xs uppercase tracking-wider shadow-sm font-handwriting">STEP 2</span>
+                  <span class="text-xs font-bold text-slate-600">Differentiate <span class="text-pink-600 font-black">u</span> & <span class="text-indigo-600 font-black">v</span></span>
+                </div>
+
+                <!-- CROSS DIAGRAM BOARD -->
+                <div class="relative bg-white p-4 rounded-xl border border-amber-200/60 shadow-sm">
+                  
+                  <!-- SVG DIAGRAM CROSS RED ARROWS -->
+                  <svg class="absolute inset-0 w-full h-full pointer-events-none z-10" preserveAspectRatio="none" viewBox="0 0 200 120">
+                    <defs>
+                      <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                        <polygon points="0 0, 8 3, 0 6" fill="#ef4444" />
+                      </marker>
+                    </defs>
+                    <line x1="45" y1="30" x2="155" y2="88" stroke="#ef4444" stroke-width="2.2" marker-end="url(#arrowhead)" class="cross-arrow-line"/>
+                    <line x1="155" y1="30" x2="45" y2="88" stroke="#ef4444" stroke-width="2.2" marker-end="url(#arrowhead)" class="cross-arrow-line"/>
+                  </svg>
+
+                  <!-- GRID 2x2 -->
+                  <div class="grid grid-cols-2 gap-x-4 gap-y-6 relative z-0 text-center">
+                    <div class="p-1.5 bg-pink-50/80 rounded-lg border border-pink-200">
+                      <span class="text-[10px] text-pink-500 font-bold block">u</span>
+                      <div id="grid-u" class="text-xs font-bold"></div>
+                    </div>
+
+                    <div class="p-1.5 bg-indigo-50/80 rounded-lg border border-indigo-200">
+                      <span class="text-[10px] text-indigo-500 font-bold block">v</span>
+                      <div id="grid-v" class="text-xs font-bold"></div>
+                    </div>
+
+                    <div class="p-1.5 bg-pink-100/80 rounded-lg border border-pink-300">
+                      <span class="text-[10px] text-pink-700 font-bold block">du/dx</span>
+                      <div id="grid-dudx" class="text-xs font-bold"></div>
+                    </div>
+
+                    <div class="p-1.5 bg-indigo-100/80 rounded-lg border border-indigo-300">
+                      <span class="text-[10px] text-indigo-700 font-bold block">dv/dx</span>
+                      <div id="grid-dvdx" class="text-xs font-bold"></div>
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- STEP 3: SUBSTITUTE INTO FORMULA -->
+          <div id="step-3-card" class="p-5 rounded-2xl bg-rose-50/50 border border-rose-200 transition-all duration-300">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <span class="px-2.5 py-1 rounded-md bg-amber-400 text-amber-950 font-black text-xs uppercase tracking-wider shadow-sm font-handwriting">STEP 3</span>
+                <span class="text-xs font-bold text-slate-700">Substitute into Formula</span>
+              </div>
+              <span class="text-[11px] text-rose-500 font-semibold font-handwriting">v · (du/dx) + u · (dv/dx)</span>
+            </div>
+
+            <div class="slide-box-dashed p-4 overflow-x-auto">
+              <div id="step3-display" class="text-base md:text-lg text-slate-900 font-semibold text-center py-1"></div>
+            </div>
+          </div>
+
+          <!-- STEP 4: FACTORIZE -->
+          <div id="step-4-card" class="p-5 rounded-2xl bg-emerald-50/50 border border-emerald-200 transition-all duration-300">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <span class="px-2.5 py-1 rounded-md bg-amber-400 text-amber-950 font-black text-xs uppercase tracking-wider shadow-sm font-handwriting">STEP 4</span>
+                <span class="text-xs font-bold text-slate-700">Factorize</span>
+              </div>
+              <span class="text-[11px] text-emerald-600 font-semibold">Ordered: Number → Unknown → Power → Brackets</span>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl border border-emerald-200 shadow-sm overflow-x-auto">
+              <div id="step4-display" class="text-base md:text-lg text-slate-900 font-semibold text-center py-1"></div>
+            </div>
+          </div>
+
+          <!-- STEP 5: SOLVE / SIMPLIFY -->
+          <div id="step-5-card" class="p-5 rounded-2xl bg-purple-50/60 border border-purple-200 transition-all duration-300">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <span class="px-2.5 py-1 rounded-md bg-purple-500 text-white font-black text-xs uppercase tracking-wider shadow-sm font-handwriting">STEP 5</span>
+                <span class="text-xs font-bold text-purple-900">Simplify / Solve</span>
+              </div>
+              <span class="text-[11px] text-purple-600 font-bold">Formatted Final Answer</span>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl border border-purple-300 shadow-md overflow-x-auto space-y-3">
+              <div id="step5-expansion" class="text-base md:text-lg text-slate-800 font-medium text-center border-b border-purple-100 pb-2"></div>
+              <div id="step5-final" class="text-lg md:text-xl font-bold text-purple-900 text-center py-1"></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- NAVIGATION STEP BY STEP -->
+        <div id="step-nav-controls" class="hidden mt-6 flex items-center justify-between pt-4 border-t border-slate-200">
+          <button onclick="changeRevealedStep(-1)" id="btn-prev-step" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs flex items-center gap-1.5 transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            Previous Step
+          </button>
+          
+          <span id="step-indicator-text" class="text-xs font-bold text-slate-500">Step 1 of 5</span>
+
+          <button onclick="changeRevealedStep(1)" id="btn-next-step" class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs flex items-center gap-1.5 transition-all shadow-sm">
+            Next Step
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+
       </div>
+
     </section>
 
   </main>
 
+  <!-- FOOTER -->
+  <footer class="mt-10 border-t border-slate-200 bg-white/60 py-4 text-center text-xs text-slate-500">
+    <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <p class="font-medium">Dynamic Product Rule Mathematics Simulator</p>
+      <p class="text-slate-400">© 2026 High School / College / Matriculation Mathematics</p>
+    </div>
+  </footer>
+
+  <!-- USER GUIDE MODAL -->
+  <div id="manualModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
+    <div class="bg-white rounded-3xl max-w-2xl w-full p-6 md:p-8 shadow-2xl border border-purple-100 relative max-h-[90vh] overflow-y-auto">
+      
+      <button onclick="toggleManualModal(false)" class="absolute top-5 right-5 p-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 transition-all">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-2xl bg-pink-100 text-pink-600 flex items-center justify-center font-bold text-xl font-handwriting">
+          📖
+        </div>
+        <div>
+          <h3 class="text-xl font-bold text-slate-900 font-handwriting">User Manual & Guide</h3>
+          <p class="text-xs text-slate-500">Complete Guide to the Dynamic Product Rule</p>
+        </div>
+      </div>
+
+      <div class="space-y-4 text-sm text-slate-600 leading-relaxed">
+        <div class="p-4 rounded-2xl bg-purple-50/70 border border-purple-100">
+          <h4 class="font-bold text-purple-900 text-sm mb-1">1. When is the Product Rule Used?</h4>
+          <p class="text-xs">
+            The Product Rule is used when a function is composed of the product of two algebraic expressions containing the variable $x$, expressed in the form <span class="font-bold text-purple-700">$y = u \cdot v$</span>.
+          </p>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-pink-50/70 border border-pink-100">
+          <h4 class="font-bold text-pink-900 text-sm mb-2">2. Standard Final Answer Format</h4>
+          <p class="text-xs mb-2">All factors and the final answer are automatically ordered according to the rule:</p>
+          <div class="p-3 bg-white rounded-xl border border-pink-200 text-xs font-mono text-purple-900 space-y-1">
+            <div>1. Whole Number (Leading coefficient)</div>
+            <div>2. Unknown (Variable x)</div>
+            <div>3. Power of Unknown (x², x³, ...)</div>
+            <div>4. Brackets (Powers of brackets & simple brackets)</div>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-sky-50/70 border border-sky-100">
+          <h4 class="font-bold text-sky-900 text-sm mb-1">3. How to Use This Simulator</h4>
+          <ul class="list-disc list-inside text-xs space-y-1">
+            <li>Select the question structure on the left panel first.</li>
+            <li>Customize the expression and power values for your specific question.</li>
+            <li>Click <strong>"Simulate & Calculate Steps"</strong> to view the detailed solution.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mt-6 text-right">
+        <button onclick="toggleManualModal(false)" class="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-sm shadow-md transition-all">
+          Understood, Start Simulator!
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT ENGINE WITH CANONICAL ORDERING -->
   <script>
-    document.getElementById('dateDisplay').textContent = new Date().toLocaleDateString('en-US', {
-      day: 'numeric',
-      month: 'numeric',
-      year: 'numeric'
+    let currentRevealMode = 'all';
+    let currentStepIndex = 1;
+
+    const TEMPLATES = {
+      'mono_bi': { uBase: 'x', uPow: 5, vBase: '2x + 8', vPow: 6 },
+      'bi_bi': { uBase: '3x + 2', uPow: 2, vBase: '5x - 4', vPow: 3 },
+      'quad_lin': { uBase: '2x - 1', uPow: 3, vBase: 'x^2 + 1', vPow: 5 }
+    };
+
+    function selectTemplate(key) {
+      const tmpl = TEMPLATES[key];
+      if (!tmpl) return;
+
+      ['mono_bi', 'bi_bi', 'quad_lin'].forEach(k => {
+        const btn = document.getElementById(`tmpl-${k}`);
+        if (k === key) {
+          btn.className = "p-2.5 rounded-xl text-left border transition-all flex items-center justify-between bg-purple-50/80 border-purple-300 text-purple-900 shadow-sm";
+          if (!btn.querySelector('span')) {
+            btn.innerHTML += `<span class="text-xs font-bold px-2 py-0.5 rounded-md bg-purple-200 text-purple-800">Selected</span>`;
+          }
+        } else {
+          btn.className = "p-2.5 rounded-xl text-left border transition-all flex items-center justify-between bg-white border-slate-200 hover:border-purple-200 text-slate-700";
+          const badge = btn.querySelector('span');
+          if (badge) badge.remove();
+        }
+      });
+
+      document.getElementById('u_base').value = tmpl.uBase;
+      document.getElementById('u_pow').value = tmpl.uPow;
+      document.getElementById('v_base').value = tmpl.vBase;
+      document.getElementById('v_pow').value = tmpl.vPow;
+
+      updateLivePreview();
+      calculateProductRule();
+    }
+
+    function parsePolynomial(str) {
+      if (!str) return [0];
+      let clean = str.replace(/\s+/g, '').toLowerCase();
+      if (clean.startsWith('(') && clean.endsWith(')')) {
+        clean = clean.substring(1, clean.length - 1);
+      }
+      let termsStr = clean.replace(/-/g, '+-');
+      if (termsStr.startsWith('+')) termsStr = termsStr.substring(1);
+
+      let terms = termsStr.split('+').filter(t => t.length > 0);
+      let coeffMap = {};
+
+      terms.forEach(term => {
+        let coeff = 1;
+        let power = 0;
+
+        if (term.includes('x')) {
+          let parts = term.split('x');
+          let cPart = parts[0];
+          let pPart = parts[1];
+
+          if (cPart === '') coeff = 1;
+          else if (cPart === '-') coeff = -1;
+          else coeff = parseFloat(cPart);
+
+          if (isNaN(coeff)) coeff = 1;
+
+          if (pPart && pPart.startsWith('^')) {
+            power = parseInt(pPart.substring(1)) || 1;
+          } else {
+            power = 1;
+          }
+        } else {
+          coeff = parseFloat(term);
+          if (isNaN(coeff)) coeff = 0;
+          power = 0;
+        }
+
+        coeffMap[power] = (coeffMap[power] || 0) + coeff;
+      });
+
+      let maxDeg = 0;
+      for (let p in coeffMap) {
+        if (parseInt(p) > maxDeg) maxDeg = parseInt(p);
+      }
+
+      let coeffs = new Array(maxDeg + 1).fill(0);
+      for (let p in coeffMap) {
+        coeffs[parseInt(p)] = coeffMap[p];
+      }
+
+      return coeffs;
+    }
+
+    function differentiatePoly(coeffs) {
+      if (coeffs.length <= 1) return [0];
+      let diff = new Array(coeffs.length - 1).fill(0);
+      for (let i = 1; i < coeffs.length; i++) {
+        diff[i - 1] = coeffs[i] * i;
+      }
+      return diff;
+    }
+
+    function multiplyPolys(p1, p2) {
+      let deg1 = p1.length - 1;
+      let deg2 = p2.length - 1;
+      let res = new Array(deg1 + deg2 + 1).fill(0);
+      for (let i = 0; i <= deg1; i++) {
+        for (let j = 0; j <= deg2; j++) {
+          res[i + j] += p1[i] * p2[j];
+        }
+      }
+      return res;
+    }
+
+    function addPolys(p1, p2) {
+      let maxLen = Math.max(p1.length, p2.length);
+      let res = new Array(maxLen).fill(0);
+      for (let i = 0; i < maxLen; i++) {
+        res[i] = (p1[i] || 0) + (p2[i] || 0);
+      }
+      return res;
+    }
+
+    function scalePoly(p, scalar) {
+      return p.map(c => c * scalar);
+    }
+
+    function gcd(a, b) {
+      a = Math.abs(a);
+      b = Math.abs(b);
+      while (b) {
+        let t = b;
+        b = a % b;
+        a = t;
+      }
+      return a;
+    }
+
+    function getPolyGcd(coeffs) {
+      let intCoeffs = coeffs.filter(c => c !== 0 && Number.isInteger(c)).map(Math.abs);
+      if (intCoeffs.length === 0) return 1;
+      let g = intCoeffs[0];
+      for (let i = 1; i < intCoeffs.length; i++) {
+        g = gcd(g, intCoeffs[i]);
+      }
+      return g || 1;
+    }
+
+    function formatPolyTex(coeffs, order = 'descending') {
+      let allZero = coeffs.every(c => c === 0);
+      if (allZero) return "0";
+
+      let terms = [];
+      let deg = coeffs.length - 1;
+
+      let indices = [];
+      if (order === 'ascending') {
+        for (let i = 0; i <= deg; i++) indices.push(i);
+      } else {
+        for (let i = deg; i >= 0; i--) indices.push(i);
+      }
+
+      indices.forEach(i => {
+        let c = coeffs[i];
+        if (c === 0) return;
+
+        let absC = Math.abs(c);
+        let cStr = (i === 0) ? `${absC}` : (absC === 1 ? "" : `${absC}`);
+        let xStr = (i === 1) ? "x" : (i > 1 ? `x^{${i}}` : "");
+        let termStr = `${cStr}${xStr}`;
+
+        if (terms.length === 0) {
+          terms.push(c < 0 ? `-${termStr}` : termStr);
+        } else {
+          terms.push(c < 0 ? `- ${termStr}` : `+ ${termStr}`);
+        }
+      });
+
+      return terms.join(" ");
+    }
+
+    function formatBracketPowerTex(baseStr, pow) {
+      let p = parsePolynomial(baseStr);
+      let formattedBase = formatPolyTex(p, 'descending');
+
+      let nonZeroTerms = p.filter(c => c !== 0).length;
+      let needsBracket = (pow > 1) || (nonZeroTerms > 1) || (p.length > 2);
+
+      let baseTex = needsBracket ? `(${formattedBase})` : formattedBase;
+      if (pow === 1) return baseTex;
+      return `${baseTex}^{${pow}}`;
+    }
+
+    // ORDERING FUNCTION: (WHOLE NUMBER -> UNKNOWN -> UNKNOWN WITH POWER -> BRACKETS)
+    function buildOrderedProductTex(integerCoeff, monomialPower, bracketsArray) {
+      let parts = [];
+
+      // 1. Whole Number
+      if (integerCoeff !== 1) {
+        if (integerCoeff === -1) {
+          parts.push("-");
+        } else {
+          parts.push(`${integerCoeff}`);
+        }
+      }
+
+      // 2. Unknown (x) - Power 1
+      if (monomialPower === 1) {
+        parts.push("x");
+      }
+
+      // 3. Unknown with Power (x^k, k > 1)
+      if (monomialPower > 1) {
+        parts.push(`x^{${monomialPower}}`);
+      }
+
+      // 4. Brackets
+      bracketsArray.forEach(b => {
+        if (b && b.trim().length > 0) {
+          parts.push(b);
+        }
+      });
+
+      if (parts.length === 0) return "1";
+      if (parts[0] === "-") {
+        return parts.length > 1 ? "-" + parts.slice(1).join("") : "-1";
+      }
+
+      return parts.join("");
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      katex.render("\\frac{dy}{dx} = v \\frac{du}{dx} + u \\frac{dv}{dx}", document.getElementById('formula-box'), { displayMode: false });
+
+      ['u_base', 'u_pow', 'v_base', 'v_pow'].forEach(id => {
+        document.getElementById(id).addEventListener('input', updateLivePreview);
+      });
+
+      updateLivePreview();
+      calculateProductRule();
     });
 
-    function buildPolynomialStr(coef, exp, constVal, power) {
-      let inner = '';
-      if (coef !== 0) {
-        if (coef === 1) inner += (exp === 1 ? 'x' : (exp === 0 ? '1' : `x^${exp}`));
-        else if (coef === -1) inner += (exp === 1 ? '-x' : (exp === 0 ? '-1' : `-x^${exp}`));
-        else inner += (exp === 1 ? `${coef}*x` : (exp === 0 ? `${coef}` : `${coef}*x^${exp}`));
-      }
-
-      if (constVal > 0) {
-        inner += (inner ? ' + ' : '') + constVal;
-      } else if (constVal < 0) {
-        inner += (inner ? ' - ' : '-') + Math.abs(constVal);
-      }
-
-      if (!inner) inner = '0';
-
-      if (power === 1) {
-        return `(${inner})`;
-      } else {
-        return `(${inner})^${power}`;
-      }
+    function resetToHome() {
+      selectTemplate('mono_bi');
+      setStepRevealMode('all');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    function toTexTerm(coef, exp) {
-      if (coef === 0) return '';
-      let s = '';
-      if (exp === 0) return `${coef}`;
-      if (coef === 1) s = '';
-      else if (coef === -1) s = '-';
-      else s = `${coef}`;
+    function resetInputs() {
+      document.getElementById('u_base').value = 'x';
+      document.getElementById('u_pow').value = '1';
+      document.getElementById('v_base').value = 'x';
+      document.getElementById('v_pow').value = '1';
+      updateLivePreview();
+      calculateProductRule();
+    }
+
+    function updateLivePreview() {
+      const uBase = document.getElementById('u_base').value.trim() || 'u';
+      const uPow = parseInt(document.getElementById('u_pow').value) || 1;
+      const vBase = document.getElementById('v_base').value.trim() || 'v';
+      const vPow = parseInt(document.getElementById('v_pow').value) || 1;
+
+      const uTex = formatBracketPowerTex(uBase, uPow);
+      const vTex = formatBracketPowerTex(vBase, vPow);
+
+      const previewTex = `y = ${uTex}${vTex}`;
+      katex.render(previewTex, document.getElementById('live-question-preview'), { displayMode: false, throwOnError: false });
+    }
+
+    function calculateProductRule() {
+      const uBase = document.getElementById('u_base').value.trim() || 'x';
+      const uPow = parseInt(document.getElementById('u_pow').value) || 1;
+      const vBase = document.getElementById('v_base').value.trim() || 'x';
+      const vPow = parseInt(document.getElementById('v_pow').value) || 1;
+
+      const uPoly = parsePolynomial(uBase);
+      const vPoly = parsePolynomial(vBase);
+
+      const uDiff = differentiatePoly(uPoly);
+      const vDiff = differentiatePoly(vPoly);
+
+      const uTex = formatBracketPowerTex(uBase, uPow);
+      const vTex = formatBracketPowerTex(vBase, vPow);
+      const questionTex = `y = ${uTex}${vTex}`;
+
+      katex.render(questionTex, document.getElementById('current-question-display'), { displayMode: false, throwOnError: false });
+      katex.render(`u = ${uTex}`, document.getElementById('step1-u-display'), { displayMode: false, throwOnError: false });
+      katex.render(`v = ${vTex}`, document.getElementById('step1-v-display'), { displayMode: false, throwOnError: false });
+
+      const Pu = scalePoly(uDiff, uPow);
+      const Pv = scalePoly(vDiff, vPow);
+
+      let duTex = (uPow === 1) ? formatPolyTex(uDiff) : `${formatPolyTex(Pu)}${formatBracketPowerTex(uBase, uPow - 1)}`;
+      let dvTex = (vPow === 1) ? formatPolyTex(vDiff) : `${formatPolyTex(Pv)}${formatBracketPowerTex(vBase, vPow - 1)}`;
+
+      katex.render(uTex, document.getElementById('grid-u'), { displayMode: false, throwOnError: false });
+      katex.render(vTex, document.getElementById('grid-v'), { displayMode: false, throwOnError: false });
+      katex.render(`\\frac{du}{dx} = ${duTex}`, document.getElementById('grid-dudx'), { displayMode: false, throwOnError: false });
+      katex.render(`\\frac{dv}{dx} = ${dvTex}`, document.getElementById('grid-dvdx'), { displayMode: false, throwOnError: false });
+
+      // STEP 3: SUBSTITUTION
+      const step3Tex = `\\frac{dy}{dx} = ${vTex} \\cdot [${duTex}] + ${uTex} \\cdot [${dvTex}]`;
+      katex.render(step3Tex, document.getElementById('step3-display'), { displayMode: false, throwOnError: false });
+
+      // STEP 4: FACTORIZATION (NUMBER -> UNKNOWN -> POWER -> BRACKETS)
+      let isUMonomial = (uBase.replace(/\s+/g,'').toLowerCase() === 'x');
+      let isVMonomial = (vBase.replace(/\s+/g,'').toLowerCase() === 'x');
+
+      let commonMonomialPow = 0;
+      if (isUMonomial && uPow > 1) {
+        commonMonomialPow = uPow - 1;
+      } else if (isVMonomial && vPow > 1) {
+        commonMonomialPow = vPow - 1;
+      }
+
+      const uRem = isUMonomial ? 0 : Math.max(0, uPow - 1);
+      const vRem = isVMonomial ? 0 : Math.max(0, vPow - 1);
+
+      const commonUBracket = (!isUMonomial && uRem > 0) ? formatBracketPowerTex(uBase, uRem) : "";
+      const commonVBracket = (!isVMonomial && vRem > 0) ? formatBracketPowerTex(vBase, vRem) : "";
+
+      const term1Poly = multiplyPolys(Pu, vPoly);
+      const term2Poly = multiplyPolys(Pv, uPoly);
+
+      const g1 = getPolyGcd(term1Poly);
+      const g2 = getPolyGcd(term2Poly);
+      const overallGcd = gcd(g1, g2);
+
+      const PuRed = scalePoly(Pu, 1 / overallGcd);
+      const PvRed = scalePoly(Pv, 1 / overallGcd);
+
+      const puRedTex = formatPolyTex(PuRed);
+      const pvRedTex = formatPolyTex(PvRed);
+
+      const uBaseTexFormatted = formatBracketPowerTex(uBase, 1);
+      const vBaseTexFormatted = formatBracketPowerTex(vBase, 1);
+
+      const innerTerm1 = `${puRedTex}${vBaseTexFormatted}`;
+      const innerTerm2 = `${pvRedTex}${uBaseTexFormatted}`;
+
+      // Outer factors for Step 4
+      let bracketsStep4 = [];
+      if (commonVBracket) bracketsStep4.push(commonVBracket);
+      if (commonUBracket) bracketsStep4.push(commonUBracket);
+      bracketsStep4.push(`\\left[ ${innerTerm1} + ${innerTerm2} \\right]`);
+
+      const step4Tex = `= ` + buildOrderedProductTex(overallGcd, commonMonomialPow, bracketsStep4);
+      katex.render(step4Tex, document.getElementById('step4-display'), { displayMode: false, throwOnError: false });
+
+      // STEP 5: SIMPLIFY AND CANONICAL FINAL ANSWER
+      const term1Red = scalePoly(term1Poly, 1 / overallGcd);
+      const term2Red = scalePoly(term2Poly, 1 / overallGcd);
+
+      const exp1Tex = formatPolyTex(term1Red);
+      const exp2Tex = formatPolyTex(term2Red);
+
+      let bracketsStep5Exp = [];
+      if (commonVBracket) bracketsStep5Exp.push(commonVBracket);
+      if (commonUBracket) bracketsStep5Exp.push(commonUBracket);
+      bracketsStep5Exp.push(`\\left[ (${exp1Tex}) + (${exp2Tex}) \\right]`);
+
+      const step5ExpTex = `= ` + buildOrderedProductTex(overallGcd, commonMonomialPow, bracketsStep5Exp);
+
+      const sumRedPoly = addPolys(term1Red, term2Red);
+      const sumRedTex = formatPolyTex(sumRedPoly);
+
+      let bracketsStep5Final = [];
+      if (commonVBracket) bracketsStep5Final.push(commonVBracket);
+      if (commonUBracket) bracketsStep5Final.push(commonUBracket);
+      bracketsStep5Final.push(`(${sumRedTex})`);
+
+      const step5FinalTex = `= ` + buildOrderedProductTex(overallGcd, commonMonomialPow, bracketsStep5Final);
+
+      katex.render(step5ExpTex, document.getElementById('step5-expansion'), { displayMode: false, throwOnError: false });
+      katex.render(step5FinalTex, document.getElementById('step5-final'), { displayMode: false, throwOnError: false });
+
+      updateStepVisibility();
+    }
+
+    function setStepRevealMode(mode) {
+      currentRevealMode = mode;
       
-      if (exp === 1) s += 'x';
-      else s += `x^{${exp}}`;
-      return s;
-    }
+      const btnAll = document.getElementById('mode-all');
+      const btnStep = document.getElementById('mode-step');
+      const navControls = document.getElementById('step-nav-controls');
 
-    function toTexPoly(coef, exp, constVal, power) {
-      let parts = [];
-      const term1 = toTexTerm(coef, exp);
-      if (term1) parts.push(term1);
-      if (constVal > 0) {
-        parts.push(`+ ${constVal}`);
-      } else if (constVal < 0) {
-        parts.push(`- ${Math.abs(constVal)}`);
-      }
-      let inner = parts.join(' ') || '0';
-      if (power > 1) {
-        return `(${inner})^{${power}}`;
-      }
-      return inner;
-    }
-
-    function nativeSolveProductRule(a, n, b, p, c, m, d, q) {
-      const texU = toTexPoly(a, n, b, p);
-      const texV = toTexPoly(c, m, d, q);
-
-      let duInnerCoef = a * n;
-      let duInnerExp = n - 1;
-      let texDuTerm = toTexTerm(duInnerCoef, duInnerExp) || '0';
-      let texDu = (p === 1) ? texDuTerm : `${p} (${toTexPoly(a, n, b, p - 1)}) \\cdot (${texDuTerm})`;
-
-      let dvInnerCoef = c * m;
-      let dvInnerExp = m - 1;
-      let texDvTerm = toTexTerm(dvInnerCoef, dvInnerExp) || '0';
-      let texDv = (q === 1) ? texDvTerm : `${q} (${toTexPoly(c, m, d, q - 1)}) \\cdot (${texDvTerm})`;
-
-      let texExpanded = '';
-      let texFactored = '';
-
-      if (p === 1 && q === 1) {
-        let term1Coef = a * c * (n + m);
-        let term1Exp = n + m - 1;
-        let term2Coef = a * d * n;
-        let term2Exp = n - 1;
-        let term3Coef = b * c * m;
-        let term3Exp = m - 1;
-
-        let terms = {};
-        function addTerm(co, ex) {
-          if (co === 0) return;
-          terms[ex] = (terms[ex] || 0) + co;
-        }
-        addTerm(term1Coef, term1Exp);
-        addTerm(term2Coef, term2Exp);
-        addTerm(term3Coef, term3Exp);
-
-        let sortedExps = Object.keys(terms).map(Number).sort((x, y) => y - x);
-        let polyParts = [];
-        sortedExps.forEach((ex, idx) => {
-          let co = terms[ex];
-          let t = toTexTerm(co, ex);
-          if (!t) return;
-          if (idx === 0) {
-            polyParts.push(t);
-          } else {
-            if (co > 0) polyParts.push(`+ ${t}`);
-            else polyParts.push(`- ${t.replace('-', '')}`);
-          }
-        });
-        texExpanded = polyParts.join(' ') || '0';
-        texFactored = texExpanded;
+      if (mode === 'all') {
+        btnAll.className = "px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-white text-purple-700 shadow-sm border border-purple-200";
+        btnStep.className = "px-3 py-1.5 rounded-xl text-xs font-bold transition-all text-slate-600 hover:text-purple-700";
+        navControls.classList.add('hidden');
       } else {
-        texExpanded = `\\left(${texV}\\right)\\left(${texDu}\\right) + \\left(${texU}\\right)\\left(${texDv}\\right)`;
-        texFactored = texExpanded;
+        btnStep.className = "px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-white text-purple-700 shadow-sm border border-purple-200";
+        btnAll.className = "px-3 py-1.5 rounded-xl text-xs font-bold transition-all text-slate-600 hover:text-purple-700";
+        navControls.classList.remove('hidden');
+        currentStepIndex = 1;
       }
 
-      return { texU, texV, texDu, texDv, texExpanded, texFactored };
+      updateStepVisibility();
     }
 
-    function applyQuestionTemplate() {
-      const template = document.getElementById('questionTemplate').value;
-      const fA = document.getElementById('fieldA');
-      const fN = document.getElementById('fieldN');
-      const fB = document.getElementById('fieldB');
-      const fP = document.getElementById('fieldP');
-      
-      const fC = document.getElementById('fieldC');
-      const fM = document.getElementById('fieldM');
-      const fD = document.getElementById('fieldD');
-      const fQ = document.getElementById('fieldQ');
+    function changeRevealedStep(dir) {
+      currentStepIndex += dir;
+      if (currentStepIndex < 1) currentStepIndex = 1;
+      if (currentStepIndex > 5) currentStepIndex = 5;
 
-      // Show all by default
-      [fA, fN, fB, fP, fC, fM, fD, fQ].forEach(el => el.classList.remove('hidden'));
-
-      if (template === 'b1') {
-        // y = (ax^n + b)(cx^m + d) -> p=1, q=1
-        document.getElementById('valP').value = 1;
-        document.getElementById('valQ').value = 1;
-        fP.classList.add('hidden');
-        fQ.classList.add('hidden');
-      } else if (template === 'b2') {
-        // y = x^n (c x + d)^q -> u = x^n (a=1, b=0, p=1), v = (cx + d)^q (m=1)
-        document.getElementById('valA').value = 1;
-        document.getElementById('valB').value = 0;
-        document.getElementById('valP').value = 1;
-        document.getElementById('valM').value = 1;
-        fA.classList.add('hidden');
-        fB.classList.add('hidden');
-        fP.classList.add('hidden');
-        fM.classList.add('hidden');
-      } else if (template === 'b3') {
-        // y = (x + b)^p (x + d)^q -> a=1, n=1, c=1, m=1
-        document.getElementById('valA').value = 1;
-        document.getElementById('valN').value = 1;
-        document.getElementById('valC').value = 1;
-        document.getElementById('valM').value = 1;
-        fA.classList.add('hidden');
-        fN.classList.add('hidden');
-        fC.classList.add('hidden');
-        fM.classList.add('hidden');
-      } else if (template === 'b5') {
-        // y = x^n (c x^m + d)^q -> e.g. y = x^2 (3x^2 + 1)^5
-        document.getElementById('valA').value = 1;
-        document.getElementById('valN').value = 2;
-        document.getElementById('valB').value = 0;
-        document.getElementById('valP').value = 1;
-        document.getElementById('valC').value = 3;
-        document.getElementById('valM').value = 2;
-        document.getElementById('valD').value = 1;
-        document.getElementById('valQ').value = 5;
-        fA.classList.add('hidden');
-        fB.classList.add('hidden');
-        fP.classList.add('hidden');
-      }
-      renderSolution();
+      updateStepVisibility();
     }
 
-    function loadPreset(a, n, b, p, c, m, d, q, templateId) {
-      if (templateId) {
-        document.getElementById('questionTemplate').value = templateId;
-        applyQuestionTemplate();
-      }
-      document.getElementById('valA').value = a;
-      document.getElementById('valN').value = n;
-      document.getElementById('valB').value = b;
-      document.getElementById('valP').value = p;
-      document.getElementById('valC').value = c;
-      document.getElementById('valM').value = m;
-      document.getElementById('valD').value = d;
-      document.getElementById('valQ').value = q;
-      renderSolution();
-    }
+    function updateStepVisibility() {
+      const card1 = document.getElementById('step-1-2-card');
+      const card3 = document.getElementById('step-3-card');
+      const card4 = document.getElementById('step-4-card');
+      const card5 = document.getElementById('step-5-card');
 
-    function renderSolution() {
-      const a = parseFloat(document.getElementById('valA').value) || 0;
-      const n = parseFloat(document.getElementById('valN').value) || 0;
-      const b = parseFloat(document.getElementById('valB').value) || 0;
-      const p = parseFloat(document.getElementById('valP').value) || 1;
-
-      const c = parseFloat(document.getElementById('valC').value) || 0;
-      const m = parseFloat(document.getElementById('valM').value) || 0;
-      const d = parseFloat(document.getElementById('valD').value) || 0;
-      const q = parseFloat(document.getElementById('valQ').value) || 1;
-
-      const mode = document.getElementById('displayMode').value;
-      const container = document.getElementById('paperOutput');
-
-      let texU, texV, texDu, texDv, texExpanded, texFactored;
-
-      // Calculate solution
-      if (typeof nerdamer !== 'undefined') {
-        try {
-          const strU = buildPolynomialStr(a, n, b, p);
-          const strV = buildPolynomialStr(c, m, d, q);
-
-          const nerdU = nerdamer(strU);
-          const nerdV = nerdamer(strV);
-          const nerdDu = nerdamer.diff(strU, 'x');
-          const nerdDv = nerdamer.diff(strV, 'x');
-
-          texU = nerdU.toTeX();
-          texV = nerdV.toTeX();
-          texDu = nerdDu.toTeX();
-          texDv = nerdDv.toTeX();
-
-          const rawDyDx = `(${strV})*(${nerdDu.toString()}) + (${strU})*(${nerdDv.toString()})`;
-          texExpanded = nerdamer.expand(rawDyDx).toTeX();
-          texFactored = nerdamer.factor(rawDyDx).toTeX();
-        } catch (e) {
-          const nativeRes = nativeSolveProductRule(a, n, b, p, c, m, d, q);
-          texU = nativeRes.texU;
-          texV = nativeRes.texV;
-          texDu = nativeRes.texDu;
-          texDv = nativeRes.texDv;
-          texExpanded = nativeRes.texExpanded;
-          texFactored = nativeRes.texFactored;
-        }
+      if (currentRevealMode === 'all') {
+        [card1, card3, card4, card5].forEach(el => {
+          el.style.display = 'block';
+          el.style.opacity = '1';
+        });
       } else {
-        const nativeRes = nativeSolveProductRule(a, n, b, p, c, m, d, q);
-        texU = nativeRes.texU;
-        texV = nativeRes.texV;
-        texDu = nativeRes.texDu;
-        texDv = nativeRes.texDv;
-        texExpanded = nativeRes.texExpanded;
-        texFactored = nativeRes.texFactored;
-      }
+        card1.style.display = (currentStepIndex >= 1) ? 'block' : 'none';
+        card3.style.display = (currentStepIndex >= 3) ? 'block' : 'none';
+        card4.style.display = (currentStepIndex >= 4) ? 'block' : 'none';
+        card5.style.display = (currentStepIndex >= 5) ? 'block' : 'none';
 
-      // Update Live Equation Preview Text Box
-      const liveBox = document.getElementById('liveEquationText');
-      if (liveBox) {
-        liveBox.innerHTML = `$y = (${texU})(${texV})$`;
-        renderMathInElement(liveBox, {
-          delimiters: [{left: '$', right: '$', display: false}],
-          throwOnError: false
-        });
-      }
+        document.getElementById('step-indicator-text').innerText = `Step ${currentStepIndex} of 5`;
 
-      try {
-        if (mode === 'blank') {
-          container.innerHTML = `
-            <div class="text-lg font-bold text-slate-800 border-b border-dashed border-slate-300 pb-3">
-              <span class="text-indigo-600 font-extrabold mr-2">(1)</span> 
-              <span>$y = (${texU})(${texV})$</span>
-              <span class="text-xs text-red-500 font-normal ml-3 bg-red-50 border border-red-200 px-2 py-0.5 rounded">2 Functions — Product Rule</span>
-            </div>
+        document.getElementById('btn-prev-step').disabled = (currentStepIndex === 1);
+        document.getElementById('btn-next-step').disabled = (currentStepIndex === 5);
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50/80 p-3 rounded-xl border border-slate-200/80 my-3">
-              <div>
-                <span class="text-xs text-slate-500 block font-medium">Function u:</span>
-                <div class="text-base font-semibold text-slate-800">$u = $ <span class="fill-blank"></span></div>
-              </div>
-              <div>
-                <span class="text-xs text-slate-500 block font-medium">Function v:</span>
-                <div class="text-base font-semibold text-slate-800">$v = $ <span class="fill-blank"></span></div>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50/80 p-3 rounded-xl border border-slate-200/80 my-3">
-              <div>
-                <span class="text-xs text-slate-500 block font-medium">Derivative (du/dx):</span>
-                <div class="text-base font-semibold text-indigo-700">$\\frac{du}{dx} = $ <span class="fill-blank"></span> $x$ <sup class="fill-blank" style="width:1.5rem;height:1.2rem;"></sup></div>
-              </div>
-              <div>
-                <span class="text-xs text-slate-500 block font-medium">Derivative (dv/dx):</span>
-                <div class="text-base font-semibold text-indigo-700">$\\frac{dv}{dx} = $ <span class="fill-blank"></span> $x$ <sup class="fill-blank" style="width:1.5rem;height:1.2rem;"></sup></div>
-              </div>
-            </div>
-
-            <div class="space-y-4 pt-2">
-              <div class="text-sm font-semibold text-slate-700 flex items-center gap-2">
-                <span class="bg-indigo-100 text-indigo-800 text-xs px-2 py-0.5 rounded font-bold">Formula</span>
-                <span>$\\frac{dy}{dx} = v \\frac{du}{dx} + u \\frac{dv}{dx}$</span>
-              </div>
-
-              <div class="text-base py-2">
-                $= ( \quad ) \\cdot ( \quad ) + ( \quad ) \\cdot ( \quad )$
-              </div>
-
-              <div class="text-base py-2 border-t border-slate-200 pt-3">
-                $= $ <span class="fill-blank" style="width:4rem"></span> $x^4 + $ <span class="fill-blank" style="width:4rem"></span> $x^2 + $ <span class="fill-blank" style="width:4rem"></span> $x$
-              </div>
-
-              <div class="text-lg font-bold border-2 border-indigo-400 bg-indigo-50/30 p-3 rounded-xl flex items-center justify-between">
-                <div>
-                  <span class="text-xs text-indigo-600 block uppercase font-semibold">Final Simplified Answer:</span>
-                  <span>$= $ <span class="fill-blank" style="width:12rem; height:2.2rem"></span></span>
-                </div>
-                <span class="text-2xl font-black text-indigo-600">\#</span>
-              </div>
-            </div>
-          `;
-        } else {
-          container.innerHTML = `
-            <div class="text-lg font-bold text-slate-800 border-b border-dashed border-slate-300 pb-3">
-              <span class="text-indigo-600 font-extrabold mr-2">(1)</span> 
-              <span>$y = (${texU})(${texV})$</span>
-              <span class="text-xs text-red-500 font-normal ml-3 bg-red-50 border border-red-200 px-2 py-0.5 rounded">2 Functions — Product Rule</span>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50/80 p-3 rounded-xl border border-slate-200/80 my-3">
-              <div>
-                <span class="text-xs text-slate-500 block font-medium">Function u:</span>
-                <div class="text-base font-semibold text-slate-800">$u = ${texU}$</div>
-              </div>
-              <div>
-                <span class="text-xs text-slate-500 block font-medium">Function v:</span>
-                <div class="text-base font-semibold text-slate-800">$v = ${texV}$</div>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50/80 p-3 rounded-xl border border-slate-200/80 my-3">
-              <div>
-                <span class="text-xs text-slate-500 block font-medium">Derivative du/dx:</span>
-                <div class="text-base font-semibold text-indigo-700">$\\frac{du}{dx} = ${texDu}$</div>
-              </div>
-              <div>
-                <span class="text-xs text-slate-500 block font-medium">Derivative dv/dx:</span>
-                <div class="text-base font-semibold text-indigo-700">$\\frac{dv}{dx} = ${texDv}$</div>
-              </div>
-            </div>
-
-            <div class="space-y-3 pt-2">
-              <div class="text-sm font-semibold text-slate-700 flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                  <span class="bg-indigo-100 text-indigo-800 text-xs px-2 py-0.5 rounded font-bold">Formula</span>
-                  <span>$\\frac{dy}{dx} = v \\frac{du}{dx} + u \\frac{dv}{dx}$</span>
-                </div>
-                <span class="text-xs text-red-500 font-normal italic">* v first, u second</span>
-              </div>
-
-              <div class="text-base overflow-x-auto py-2 bg-amber-50/40 p-2.5 rounded-lg border border-amber-200/60">
-                $= \\left(${texV}\\right) \\cdot \\left(${texDu}\\right) + \\left(${texU}\\right) \\cdot \\left(${texDv}\\right)$
-              </div>
-
-              <div class="text-base text-slate-800 overflow-x-auto py-1">
-                <span class="text-xs text-slate-500 block">Fully Expanded Form:</span>
-                $= ${texExpanded}$
-              </div>
-
-              ${p > 1 || q > 1 ? `
-              <div class="text-base text-slate-800 overflow-x-auto py-1 border-t border-slate-100 pt-2">
-                <span class="text-xs text-slate-500 block">Factored Form:</span>
-                $= ${texFactored}$
-              </div>
-              ` : ''}
-
-              <div class="text-lg font-bold text-slate-900 border-2 border-indigo-600 bg-indigo-50/50 p-3.5 rounded-xl flex items-center justify-between overflow-x-auto mt-4 shadow-sm">
-                <div>
-                  <span class="text-xs text-indigo-600 block uppercase font-semibold">Final Simplified Answer:</span>
-                  <span>$= ${p > 1 || q > 1 ? texFactored : texExpanded}$</span>
-                </div>
-                <span class="text-2xl font-black text-indigo-600 ml-4">\#</span>
-              </div>
-            </div>
-          `;
-        }
-
-        renderMathInElement(container, {
-          delimiters: [
-            {left: '$$', right: '$$', display: true},
-            {left: '$', right: '$', display: false}
-          ],
-          throwOnError: false
-        });
-
-      } catch (e) {
-        console.error(e);
-        container.innerHTML = `<div class="text-red-500 text-sm font-semibold">Error calculating expression. Please verify the input values.</div>`;
+        document.getElementById('btn-prev-step').style.opacity = (currentStepIndex === 1) ? '0.5' : '1';
+        document.getElementById('btn-next-step').style.opacity = (currentStepIndex === 5) ? '0.5' : '1';
       }
     }
 
-    window.onload = function() {
-      applyQuestionTemplate();
-    };
+    function toggleManualModal(show) {
+      const modal = document.getElementById('manualModal');
+      if (show) {
+        modal.classList.remove('hidden');
+        setTimeout(() => modal.classList.remove('opacity-0'), 10);
+      } else {
+        modal.classList.add('opacity-0');
+        setTimeout(() => modal.classList.add('hidden'), 300);
+      }
+    }
   </script>
 </body>
 </html>
+
